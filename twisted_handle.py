@@ -3,14 +3,26 @@ from PyQt5 import QtCore
 from twisted.internet.protocol import Factory
 from twisted.protocols.basic import LineReceiver
 
-class Chat(LineReceiver):
-    def __init__(self, users):
-        self.users = users
-        self.name = None
+
+class TcpServerPipe(QtCore.QObject):
+    """
+    twisted和qt页面通信类
+    """
+    pipeSignal = QtCore.pyqtSignal()
+
+    def emitData(self, data):
+       self.pipeSignal.emit(data) 
+
+global tcp_server_pipe
+tcp_server_pipe = TcpServerPipe()
+
+class Work(LineReceiver):
+    def __init__(self):
         self.state = "GETNAME"
 
     def connectionMade(self):
-        self.sendLine("What's your name?".encode('utf-8'))
+        echo_buf = "Welcome to the UTEK network debugging tool."
+        self.sendLine(echo_buf.encode('utf-8'))
 
     def connectionLost(self):
         if self.name in self.users:
@@ -41,13 +53,13 @@ class Chat(LineReceiver):
                 protocol.sendLine(message.encode('utf-8'))
 
 
-class ChatFactory(Factory):
+class WorkFactory(Factory):
     def __init__(self):
         print('starting....')
         self.users = {}
 
     def buildProtocol(self, addr):
-        return Chat(self.users)
+        return Work(self.users)
 
 
 class TcpServerDebug(QtCore.QThread):
