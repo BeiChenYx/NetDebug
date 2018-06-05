@@ -1,6 +1,7 @@
+from PyQt5 import QtCore
+
 from twisted.internet.protocol import Factory
 from twisted.protocols.basic import LineReceiver
-from twisted.internet import reactor
 
 class Chat(LineReceiver):
     def __init__(self, users):
@@ -49,7 +50,16 @@ class ChatFactory(Factory):
         return Chat(self.users)
 
 
-if __name__ == "__main__":
-    # reactor.listenTCP(8000, ChatFactory())
-    # reactor.run()
-    pass
+class TcpServerDebug(QtCore.QThread):
+    receive_data = QtCore.pyqtSignal()
+    def __int__(self):
+        super(TcpServerDebug, self).__init__()
+
+    def setPort(self, port):
+        self._port = port
+
+    def run(self):
+        from twisted.internet import reactor
+        reactor.listenTCP(self._port, ChatFactory())
+        reactor.run()
+        del reactor
