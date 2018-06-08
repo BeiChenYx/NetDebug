@@ -17,34 +17,47 @@ class TCPServerWorkThread(QtCore.QThread):
         self._ip = ip
         self._port = port
         self._exit = False
+        self._mutx = QtCore.QMutex()
 
     def exitTCPServer(self):
         self._exit = True
+        # 使用一个客户端去触发事件循环从而促使事件关闭
         cc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         cc.connect((self._ip, self._port))
         cc.close()
 
+    def sendData(self, addr, msg):
+        self._mutx.lock()
+        conn = list(self._clients.keys())[
+            list(self._clients.values()).index(addr)
+        ]
+        conn.send(msg.encode('gbk'))
+        self._mutx.unlock()
+
     def run(self):
-        _clients = dict() # conn:addr
+        self.clients = dict() # conn:addr
         def accept(sock, mask):
             conn, addr = sock.accept()
             conn.setblocking(False)
             sel.register(conn, selectors.EVENT_READ, read)
             # print('client addr: ', addr)
             # print('client conn: ', conn)
-            _clients[conn] = addr
+            self._clients[conn] = addr
             msg = "1-%s" % str(addr)
             self.statusSignal.emit(msg)
 
         def read(conn, mask):
+            self._mutx.lock()
             data = conn.recv(1000)
             if data:
                 self.dataSignal.emit(data)
             else:
-                msg = "2-%s" % str(_clients[conn])
+                msg = "2-%s" % str(self._clients[conn])
                 sel.unregister(conn)
+                del self._clients[conn]
                 conn.close()
                 self.statusSignal.emit(msg)
+            self._mutx.unlock()
 
         sock = socket.socket()
         sock.bind((self._ip, self._port))

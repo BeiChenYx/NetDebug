@@ -114,7 +114,6 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 self.on_workStatus
             )
             self.tcp_server.start()
-
         else:
             self.tcp_server.exitTCPServer()
             self.tcp_server.quit()
@@ -161,9 +160,8 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         msg:  "('127.0.0.1', 8000)"
         """
         client_info = eval(msg)
-        self._clients.append(
-            client_info[0] + ':' + str(client_info[1])
-        )
+        info = client_info[0] + ':' + str(client_info[1])
+        self._clients.append(info)
 
     def client_close(self, msg):
         client_info = eval(msg)
@@ -182,6 +180,18 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
 
     def on_pushButton_Clear_display(self):
         self.textEdit.clear()
+
+    def update_listWidget(self):
+        """
+        更新listView，如果self._clients为空则全都删除
+        """
+        self.listWidget.clear()
+        self.listWidget.addItems(self._clients)
+    
+    def get_listView_select_text(self):
+        return self.listWidget.currentItem().text()
+    
+
 
 if __name__ == '__main__':
     import sys

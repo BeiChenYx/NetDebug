@@ -25,13 +25,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tabWidget.addTab(self.tcp_server, 'TCP服务器')
 
         self.setWindowIcon(QtGui.QIcon('./images/ico.png'))
-        self.resize(750, 500)
+        self.resize(760, 600)
 
     def initConfig(self):
         self.tcp_server.initConfig()
 
     def closeEvent(self, event):
-        self.tcp_server.update_config()
+        # self.tcp_server.update_config()
         event.accept()
 
     def status_show(self, str):

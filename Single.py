@@ -3,7 +3,7 @@ import configparser
 
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
-from UI.ui_Single import Ui_Form
+from UI.ui_SingleSend import Ui_Form
 
 
 class SingleSend(QtWidgets.QWidget, Ui_Form):
