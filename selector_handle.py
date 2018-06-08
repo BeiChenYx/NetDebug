@@ -28,21 +28,24 @@ class TCPServerWorkThread(QtCore.QThread):
 
     def sendData(self, addr, msg):
         self._mutx.lock()
+        print('msg type is: ', type(msg),': ', msg)
+        print('addr type is: ', type(addr),': ', addr)
+        # print(self._clients)
         conn = list(self._clients.keys())[
             list(self._clients.values()).index(addr)
         ]
-        conn.send(msg.encode('gbk'))
+        conn.send(msg)
         self._mutx.unlock()
 
     def run(self):
-        self.clients = dict() # conn:addr
+        self._clients = dict() # conn:addr
         def accept(sock, mask):
             conn, addr = sock.accept()
             conn.setblocking(False)
             sel.register(conn, selectors.EVENT_READ, read)
             # print('client addr: ', addr)
             # print('client conn: ', conn)
-            self._clients[conn] = addr
+            self._clients[conn] = str(addr)
             msg = "1-%s" % str(addr)
             self.statusSignal.emit(msg)
 
@@ -52,7 +55,7 @@ class TCPServerWorkThread(QtCore.QThread):
             if data:
                 self.dataSignal.emit(data)
             else:
-                msg = "2-%s" % str(self._clients[conn])
+                msg = "2-%s" % self._clients[conn]
                 sel.unregister(conn)
                 del self._clients[conn]
                 conn.close()

@@ -32,8 +32,10 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
     
     def initUi(self):
         self.tabWidget.clear()
+
         self.single_send = SingleSend(self)
         self.send_list = SendList(self)
+
         self.scrollArea = QtWidgets.QScrollArea(self)
         self.scrollArea.setWidget(self.send_list)
         self.tabWidget.addTab(self.single_send, '单条发送')
@@ -100,6 +102,9 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.pushButton_Clear_Recv.clicked.connect(
             self.on_pushButton_Clear_display
         )
+        self.single_send.data_signal.connect(
+            self.sendData 
+        )
     
     def on_pushButton_Connect(self):
         if self.pushButton_Connect.text() == '连接':
@@ -159,15 +164,15 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         """
         msg:  "('127.0.0.1', 8000)"
         """
-        client_info = eval(msg)
-        info = client_info[0] + ':' + str(client_info[1])
-        self._clients.append(info)
+        # client_info = eval(msg)
+        # info = client_info[0] + ':' + str(client_info[1])
+        self._clients.append(msg)
+        self.update_listWidget()
 
     def client_close(self, msg):
-        client_info = eval(msg)
-        self._clients.remove(
-            client_info[0] + ':' + str(client_info[1])
-        )
+        # client_info = eval(msg)
+        self._clients.remove(msg)
+        self.update_listWidget()
     
     def server_start(self, msg):
         self.status_signal.emit(msg)
@@ -177,6 +182,8 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.status_signal.emit(msg)
         self.pushButton_Connect.setText('连接')
         print('服务器关闭')
+        self._clients.clear()
+        self.update_listWidget()
 
     def on_pushButton_Clear_display(self):
         self.textEdit.clear()
@@ -191,6 +198,9 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
     def get_listView_select_text(self):
         return self.listWidget.currentItem().text()
     
+    def sendData(self, msg):
+        addr = self.get_listView_select_text()
+        self.tcp_server.sendData(addr, msg)
 
 
 if __name__ == '__main__':
