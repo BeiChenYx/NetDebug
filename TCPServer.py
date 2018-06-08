@@ -3,10 +3,12 @@ import configparser
 
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 
 from UI.ui_TCPServer import Ui_Form
 from Single import SingleSend
 from SendList import SendList
+from selector_handle import TCPServerWorkThread
 
 
 class TcpServer(QtWidgets.QWidget, Ui_Form):
@@ -18,6 +20,15 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.setupUi(self)
         self.initUi()
         self._config_path = './NetDebug.ini'
+        self.initConnect()
+        self.cmd_status_func_dict = {
+            0: self.info_status,
+            1: self.client_connect,
+            2: self.client_close,
+            3: self.server_start,
+            4: self.server_close,
+        }
+        self._clients = list()
     
     def initUi(self):
         self.tabWidget.clear()
@@ -82,6 +93,95 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         with open(self._config_path, 'w', encoding='utf-8') as fi:
             config.write(fi)
 
+    def initConnect(self):
+        self.pushButton_Connect.clicked.connect(
+            self.on_pushButton_Connect
+        )
+        self.pushButton_Clear_Recv.clicked.connect(
+            self.on_pushButton_Clear_display
+        )
+    
+    def on_pushButton_Connect(self):
+        if self.pushButton_Connect.text() == '连接':
+            self.tcp_server = TCPServerWorkThread(
+                self.lineEdit_IP.text(),
+                int(self.lineEdit_Port.text())
+            )
+            self.tcp_server.dataSignal.connect(
+                self.on_workData
+            )
+            self.tcp_server.statusSignal.connect(
+                self.on_workStatus
+            )
+            self.tcp_server.start()
+
+        else:
+            self.tcp_server.exitTCPServer()
+            self.tcp_server.quit()
+            self.tcp_server.wait(1000)
+    
+    def on_workData(self, data):
+        if self.checkBox_Pause_Display.isChecked():
+            return
+        if len(self.textEdit.toPlainText()) > 4096:
+            self.textEdit.clear()
+
+        if self.checkBox_Display_Hex.isChecked():
+            data_list = list(map(lambda x: '%02X' % x, data))
+            self.textEdit.moveCursor(QtGui.QTextCursor.End)
+            self.textEdit.insertPlainText(
+                ' '.join(data_list) + ' '
+            )
+        else:
+            self.textEdit.moveCursor(QtGui.QTextCursor.End)
+            self.textEdit.insertPlainText(data.decode('gbk', 'ignore'))
+
+    def on_workStatus(self, msg):
+        """
+        msg格式:
+            cmd-message
+            cmd:
+                0: info_status      普通状态栏消息
+                1: client_connect   客户端连接信息
+                2: client_close     客户端关闭信息
+                3: server_start     服务器开启的信息
+                4: server_close     服务器关闭的信息
+        """
+        cmd, message = msg.split('-')
+        self.handle_workStatus(int(cmd), message)
+
+    def handle_workStatus(self, cmd, msg):
+        self.cmd_status_func_dict[cmd](msg)
+
+    def info_status(self, msg):
+        self.status_signal.emit(msg)
+    
+    def client_connect(self, msg):
+        """
+        msg:  "('127.0.0.1', 8000)"
+        """
+        client_info = eval(msg)
+        self._clients.append(
+            client_info[0] + ':' + str(client_info[1])
+        )
+
+    def client_close(self, msg):
+        client_info = eval(msg)
+        self._clients.remove(
+            client_info[0] + ':' + str(client_info[1])
+        )
+    
+    def server_start(self, msg):
+        self.status_signal.emit(msg)
+        self.pushButton_Connect.setText('关闭')
+
+    def server_close(self, msg):
+        self.status_signal.emit(msg)
+        self.pushButton_Connect.setText('连接')
+        print('服务器关闭')
+
+    def on_pushButton_Clear_display(self):
+        self.textEdit.clear()
 
 if __name__ == '__main__':
     import sys
