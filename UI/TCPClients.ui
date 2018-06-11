@@ -6,59 +6,50 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>597</width>
-    <height>553</height>
+    <width>488</width>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>TCP/IP_Server</string>
+   <string>TCP/IP_Clients</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="spacing">
-    <number>0</number>
-   </property>
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="maximumSize">
-        <size>
-         <width>137</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="title">
-        <string/>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0" rowspan="2">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="maximumSize">
+      <size>
+       <width>137</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">
-         <number>6</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
+         <number>3</number>
         </property>
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>本机IP地址:</string>
+           <string>目标地址:</string>
           </property>
          </widget>
         </item>
@@ -68,7 +59,7 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>本地端口:</string>
+           <string>目标端口:</string>
           </property>
          </widget>
         </item>
@@ -90,21 +81,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBox_Pause_Display">
+         <widget class="QCheckBox" name="checkBox_Pause">
           <property name="text">
            <string>暂停接收显示</string>
           </property>
          </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="checkBox_Recv_To_File">
-          <property name="text">
-           <string>接收转向文件</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit_Recv_File_Path"/>
         </item>
         <item>
          <widget class="QPushButton" name="pushButton_Connect">
@@ -114,9 +95,16 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_Clear_Recv">
+         <widget class="QPushButton" name="pushButton_Clear_Display">
           <property name="text">
            <string>清空显示</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_Send_File">
+          <property name="text">
+           <string>发送文件</string>
           </property>
          </widget>
         </item>
@@ -128,7 +116,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QLabel" name="label_3">
             <property name="maximumSize">
@@ -152,9 +140,9 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="label_5">
             <property name="maximumSize">
              <size>
               <width>20</width>
@@ -175,46 +163,53 @@
           </item>
          </layout>
         </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>网络数据接收</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="leftMargin">
-         <number>5</number>
-        </property>
-        <property name="topMargin">
-         <number>5</number>
-        </property>
-        <property name="rightMargin">
-         <number>5</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QTextEdit" name="textEdit"/>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
-      </widget>
-     </item>
-    </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>170</height>
-      </size>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>网络数据接收</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>6</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QTextEdit" name="textEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QGroupBox" name="groupBox_2">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -226,7 +221,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">
-       <number>9</number>
+       <number>0</number>
       </property>
       <property name="topMargin">
        <number>0</number>
@@ -235,32 +230,13 @@
        <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
-      <property name="horizontalSpacing">
-       <number>3</number>
-      </property>
-      <property name="verticalSpacing">
+      <property name="spacing">
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <widget class="QListWidget" name="listWidget">
-        <property name="maximumSize">
-         <size>
-          <width>129</width>
-          <height>1000</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
        <widget class="QTabWidget" name="tabWidget">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>100000</height>
-         </size>
-        </property>
         <property name="currentIndex">
          <number>1</number>
         </property>

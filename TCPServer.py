@@ -1,4 +1,5 @@
 import os
+import time
 import configparser
 
 from PyQt5 import QtWidgets
@@ -34,12 +35,12 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.tabWidget.clear()
 
         self.single_send = SingleSend(self)
-        self.send_list = SendList(self)
+        # self.send_list = SendList(self)
 
-        self.scrollArea = QtWidgets.QScrollArea(self)
-        self.scrollArea.setWidget(self.send_list)
-        self.tabWidget.addTab(self.single_send, '单条发送')
-        self.tabWidget.addTab(self.scrollArea, '多条发送')
+        # self.scrollArea = QtWidgets.QScrollArea(self)
+        # self.scrollArea.setWidget(self.send_list)
+        self.tabWidget.addTab(self.single_send, '数据发送')
+        # self.tabWidget.addTab(self.scrollArea, '多条发送')
 
     def initConfig(self):
         config = configparser.ConfigParser()
@@ -104,6 +105,12 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.single_send.status_signal.connect(
             self.status_signal
         )
+        self.pushButton_Clear_Count.clicked.connect(
+            self.on_pushButton_clear_count
+        )
+        self.checkBox_Recv_To_File.stateChanged.connect(
+            self.on_to_file
+        )
     
     def on_pushButton_Connect(self):
         if self.pushButton_Connect.text() == '连接':
@@ -129,15 +136,23 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         if len(self.textEdit.toPlainText()) > 4096:
             self.textEdit.clear()
 
+        self.label_RX.setText(
+            str(int(self.label_RX.text()) + len(data))
+        )
+        date_time = '' 
+        if self.checkBox_Display_Time.isChecked():
+            date_time = self.get_date_time()
+
+        self.textEdit.moveCursor(QtGui.QTextCursor.End)
         if self.checkBox_Display_Hex.isChecked():
             data_list = list(map(lambda x: '%02X' % x, data))
-            self.textEdit.moveCursor(QtGui.QTextCursor.End)
-            self.textEdit.insertPlainText(
-                ' '.join(data_list) + ' '
-            )
+            self.textEdit.insertPlainText(' '.join(data_list) + ' ' + date_time)
+            if self.checkBox_Recv_To_File.isChecked():
+                self.save_file_name(' '.join(data_list) + ' ' + date_time)
         else:
-            self.textEdit.moveCursor(QtGui.QTextCursor.End)
-            self.textEdit.insertPlainText(data.decode('gbk', 'ignore'))
+            self.textEdit.insertPlainText(data.decode('gbk', 'ignore') + date_time)
+            if self.checkBox_Recv_To_File.isChecked():
+                self.save_file_name(data.decode('gbk', 'ignore') + date_time)
 
     def on_workStatus(self, msg):
         """
@@ -201,6 +216,32 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
     def sendData(self, msg):
         addr = self.get_listView_select_text()
         self.tcp_server.sendData(addr, msg)
+        self.label_TX.setText(
+            str(int(self.label_TX.text()) + len(msg))
+        )
+
+    def on_pushButton_clear_count(self):
+        self.label_RX.setText('0')
+        self.label_TX.setText('0')
+
+    def on_to_file(self):
+        if self.checkBox_Recv_To_File.isChecked():
+            file_name, _ = QtWidgets.QFileDialog.getSaveFileName(
+                self,
+                '文件保存',
+                'c:/',
+                'All Files (*);;Text Files (*.txt)'
+            )
+            self.lineEdit_Recv_File_Path.setText(file_name)
+
+    def get_date_time(self):
+        return time.strftime(' [%Y-%m-%d %H:%M:%S]\n', time.localtime())
+
+    def save_file_name(self, data):
+        with open(
+            self.lineEdit_Recv_File_Path.text(), 'a', encoding='gbk'
+        ) as file:
+            file.write(data)
 
 
 if __name__ == '__main__':

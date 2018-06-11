@@ -1,6 +1,7 @@
 import os
 import configparser
 
+
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 from UI.ui_SingleSend import Ui_Form
