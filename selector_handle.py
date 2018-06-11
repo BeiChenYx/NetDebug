@@ -29,15 +29,9 @@ class TCPServerWorkThread(QtCore.QThread):
 
     def sendData(self, addr, msg):
         self._mutx.lock()
-        print('msg type is: ', type(msg),': ', msg)
-        # print('addr type is: ', type(addr),': ', addr)
-        # print(self._clients)
         conn = list(self._clients.keys())[
             list(self._clients.values()).index(addr)
         ]
-        print('conn: ', conn)
-        print('type conn: ', type(conn))
-        print('_clients: ', self._clients)
         conn.send(msg)
         self._mutx.unlock()
 

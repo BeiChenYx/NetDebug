@@ -193,6 +193,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         """
         self.listWidget.clear()
         self.listWidget.addItems(self._clients)
+        self.listWidget.setCurrentRow(0)
     
     def get_listView_select_text(self):
         return self.listWidget.currentItem().text()
