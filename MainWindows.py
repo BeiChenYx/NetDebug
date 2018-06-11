@@ -3,6 +3,7 @@ from PyQt5 import QtGui
 from UI.ui_MainWindows import Ui_MainWindow
 
 from TCPServer import TcpServer
+from TCPClients import TcpClients
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -11,6 +12,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.tcp_server = TcpServer(self)
+        self.tcp_clients = TcpClients(self)
 
         self.tcp_server.status_signal.connect(
             self.status_show
@@ -23,6 +25,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def initUi(self):
         self.tabWidget.clear()
         self.tabWidget.addTab(self.tcp_server, 'TCP服务器')
+        self.tabWidget.addTab(self.tcp_clients, 'TCP客户端')
 
         self.setWindowIcon(QtGui.QIcon('./images/ico.png'))
         self.resize(760, 600)
