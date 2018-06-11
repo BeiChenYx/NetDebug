@@ -10,12 +10,13 @@ class SingleSend(QtWidgets.QWidget, Ui_Form):
 
     status_signal = QtCore.pyqtSignal(str)
     data_signal = QtCore.pyqtSignal(bytes)
+
     def __init__(self, parent):
         super(SingleSend, self).__init__(parent)
         self.setupUi(self)
 
         self.pushButton.clicked.connect(
-            self.on_pushButton_clicked
+            self.on_push_button_clicked
         )
 
     def initConfig(self):
@@ -41,7 +42,7 @@ class SingleSend(QtWidgets.QWidget, Ui_Form):
         else:
             return msg.encode('gbk')
 
-
-    def on_pushButton_clicked(self):
+    def on_push_button_clicked(self):
         msg = self.handle_data()
+        print('call push clicked')
         self.data_signal.emit(msg)

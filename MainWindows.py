@@ -32,11 +32,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def closeEvent(self, event):
         # self.tcp_server.update_config()
+        self.tcp_server.on_pushButton_Connect()
         event.accept()
 
-    def status_show(self, str):
-        self.statusBar().showMessage(str, 5000)
-
+    def status_show(self, msg):
+        self.statusBar().showMessage(msg, 5000)
 
 
 if __name__ == '__main__':

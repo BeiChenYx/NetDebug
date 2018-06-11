@@ -5,6 +5,7 @@ from PyQt5 import QtCore
 import selectors
 import socket
 
+
 class TCPServerWorkThread(QtCore.QThread):
     """
     处理TCPServer的服务器线程
@@ -29,11 +30,14 @@ class TCPServerWorkThread(QtCore.QThread):
     def sendData(self, addr, msg):
         self._mutx.lock()
         print('msg type is: ', type(msg),': ', msg)
-        print('addr type is: ', type(addr),': ', addr)
+        # print('addr type is: ', type(addr),': ', addr)
         # print(self._clients)
         conn = list(self._clients.keys())[
             list(self._clients.values()).index(addr)
         ]
+        print('conn: ', conn)
+        print('type conn: ', type(conn))
+        print('_clients: ', self._clients)
         conn.send(msg)
         self._mutx.unlock()
 
@@ -84,5 +88,7 @@ class TCPServerWorkThread(QtCore.QThread):
                 obj = key.fileobj
                 func(obj, mask)
 
+        # 断开所有客户端连接
+        [conn.close() for conn in self._clients]
         sock.close()
         sel.close()

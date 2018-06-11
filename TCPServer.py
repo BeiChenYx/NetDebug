@@ -41,10 +41,6 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.tabWidget.addTab(self.single_send, '单条发送')
         self.tabWidget.addTab(self.scrollArea, '多条发送')
 
-        self.single_send.status_signal.connect(
-            self.status_signal
-        )
-
     def initConfig(self):
         config = configparser.ConfigParser()
         try:
@@ -75,7 +71,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                     tcp_server['inputFromfile']
                 )
 
-                self.single_send.initConfig()
+                # self.single_send.initConfig()
         except Exception as err:
             self.status_signal.emit(str(err))
 
@@ -103,7 +99,10 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
             self.on_pushButton_Clear_display
         )
         self.single_send.data_signal.connect(
-            self.sendData 
+            self.sendData
+        )
+        self.single_send.status_signal.connect(
+            self.status_signal
         )
     
     def on_pushButton_Connect(self):
