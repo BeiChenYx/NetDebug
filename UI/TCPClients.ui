@@ -164,17 +164,17 @@
          </layout>
         </item>
         <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>客户端个数:</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_Clients_Count"/>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="tableWidget"/>
         </item>
        </layout>
       </item>

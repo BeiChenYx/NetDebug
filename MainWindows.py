@@ -1,3 +1,5 @@
+import configparser
+
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from UI.ui_MainWindows import Ui_MainWindow
@@ -14,7 +16,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tcp_server = TcpServer(self)
         self.tcp_clients = TcpClients(self)
 
+        self._config_path = './NetDebug.ini'
         self.tcp_server.status_signal.connect(
+            self.status_show
+        )
+        self.tcp_clients.status_signal.connect(
             self.status_show
         )
 
@@ -32,9 +38,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def initConfig(self):
         self.tcp_server.initConfig()
+        self.tcp_clients.initConfig()
+    
+    def update_config(self):
+        config = configparser.ConfigParser()
+        config['TCPServer'] = self.tcp_server.update_config()
+        config['TCPClients'] = self.tcp_clients.update_config()
+
+        with open(self._config_path, 'w', encoding='utf-8') as fi:
+            config.write(fi)
+
 
     def closeEvent(self, event):
-        # self.tcp_server.update_config()
+        self.update_config()
         self.tcp_server.on_pushButton_Connect()
         event.accept()
 

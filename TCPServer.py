@@ -77,20 +77,18 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
             self.status_signal.emit(str(err))
 
     def update_config(self):
-        config = configparser.ConfigParser()
-        config['TCPServer'] = {
+        config = {
             'localip': self.lineEdit_IP.text(),
             'localport': self.lineEdit_Port.text(),
             'displayrecvetime': str(self.checkBox_Display_Time.isChecked()),
             'hexdisplay': str(self.checkBox_Display_Hex.isChecked()),
             'pause': str(self.checkBox_Pause_Display.isChecked()),
-            'readtofile': str(self.checkBox_Recv_To_File.isChecked()),
-            'readtofilepath': self.lineEdit_Recv_File_Path.text(),
-            'hexinput': str(self.checkBox_Input_Hex.isChecked()),
-            'inputFromfile': self.lineEdit_Input_File_Path.text(),
+            # 'readtofile': str(self.checkBox_Recv_To_File.isChecked()),
+            # 'readtofilepath': self.lineEdit_Recv_File_Path.text(),
+            # 'hexinput': str(self.checkBox_Input_Hex.isChecked()),
+            # 'inputFromfile': self.lineEdit_Input_File_Path.text(),
         }
-        with open(self._config_path, 'w', encoding='utf-8') as fi:
-            config.write(fi)
+        return config
 
     def initConnect(self):
         self.pushButton_Connect.clicked.connect(
