@@ -102,13 +102,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_Send_File">
-          <property name="text">
-           <string>发送文件</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QPushButton" name="pushButton_Clear_Count">
           <property name="text">
            <string>清空计数</string>

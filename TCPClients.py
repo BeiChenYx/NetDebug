@@ -7,6 +7,8 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from UI.ui_TCPClients import Ui_Form
+from Single import SingleSend
+from SendList import SendList
 
 from selector_clients_handle import TcpClientsWorkThread
 
@@ -32,11 +34,36 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         self._clients = list()
 
     def initUi(self):
-        pass
+        self.tabWidget.clear()
+
+        self.single_send = SingleSend(self)
+        self.send_list = SendList(self)
+        self.scrollArea = QtWidgets.QScrollArea(self)
+        self.scrollArea.setWidget(self.send_list)
+        self.tabWidget.addTab(self.single_send, '数据发送')
+        self.tabWidget.addTab(self.scrollArea, '多条发送')
 
     def initConnect(self):
         self.pushButton_Connect.clicked.connect(
             self.on_pushButton_Connect_cliecked
+        )
+        self.pushButton_Clear_Display.clicked.connect(
+            self.on_pushButton_clear_display        
+        )
+        self.pushButton_Clear_Count.clicked.connect(
+            self.on_pushButton_clear_count
+        )
+        self.single_send.data_signal.connect(
+            self.sendData
+        )
+        self.single_send.status_signal.connect(
+            self.status_signal
+        )
+        self.send_list.data_signal.connect(
+            self.sendData
+        )
+        self.send_list.status_signal.connect(
+            self.status_signal
         )
 
     def initConfig(self):
@@ -74,6 +101,13 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         }
         return config
 
+    def on_pushButton_clear_display(self):
+        self.textEdit.clear()
+
+    def on_pushButton_clear_count(self):
+        self.label_RX.setText('0')
+        self.label_TX.setText('0')
+
     def on_pushButton_Connect_cliecked(self):
         if self.pushButton_Connect.text() == '连接':
             self.tcp_clients = TcpClientsWorkThread(
@@ -94,8 +128,26 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
             self.tcp_clients.wait(1000)
 
     def on_workData(self, msg):
-        # print(msg)
-        self.textEdit.append(msg.decode('gbk'))
+        if self.checkBox_Pause.isChecked():
+            return
+        if len(self.textEdit.toPlainText()) > 4096:
+            self.textEdit.clear()
+        self.label_RX.setText(
+            str(int(self.label_RX.text()) + len(msg))
+        )
+        
+        date_time = '' 
+        if self.checkBox_Display_Time.isChecked():
+            date_time = self.get_date_time()
+
+        self.textEdit.moveCursor(QtGui.QTextCursor.End)
+        if self.checkBox_Display_Hex.isChecked():
+            data_list = list(map(lambda x: '%02X' % x, msg))
+            self.textEdit.insertPlainText(' '.join(data_list) + ' ' + date_time)
+            if self.checkBox_Recv_To_File.isChecked():
+                self.save_file_name(' '.join(data_list) + ' ' + date_time)
+        else:
+            self.textEdit.insertPlainText(msg.decode('gbk', 'ignore') + date_time)
 
     def on_workStatus(self, msg):
         """
@@ -118,12 +170,10 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
     def clientConnect(self, msg):
         self._clients.append(msg)
         self.update_listWidget()
-        print('client connect')
 
     def clientClose(self, msg):
         self._clients.remove(msg)
         self.update_listWidget()
-        print('client close')
 
     def clientConnectErr(self, msg):
         self.status_signal.emit(msg)
@@ -134,12 +184,10 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
     def clientThreadStart(self, msg):
         self.status_signal.emit(msg)
         self.pushButton_Connect.setText('关闭')
-        print('client 打开')
 
     def clientThreadClose(self, msg):
         self.status_signal.emit(msg)
         self.pushButton_Connect.setText('连接')
-        print('client 退出')
 
     def update_listWidget(self):
         """
@@ -148,3 +196,12 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         self.listWidget.clear()
         self.listWidget.addItems(self._clients)
         self.listWidget.setCurrentRow(0)
+
+    def sendData(self, msg):
+        self.tcp_clients.sendData(msg)
+        self.label_TX.setText(
+            str(int(self.label_TX.text()) + len(msg))
+        )
+
+    def get_date_time(self):
+        return time.strftime(' [%Y-%m-%d %H:%M:%S]\n', time.localtime())
