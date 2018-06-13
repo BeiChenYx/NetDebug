@@ -2,6 +2,7 @@
 # import selectors
 import socket
 import select
+import queue
 
 
 from PyQt5 import QtCore
@@ -19,23 +20,19 @@ class TcpClientsWorkThread(QtCore.QThread):
         self._ip = ip
         self._port = port
         self._exit = False
-        self._mutex = QtCore.QMutex()
 
         # 客户端个数
         self._count = count
+        self._queue = queue.Queue()
 
     def exitTcpClientsThread(self):
-        self._mutex.lock()
-        [cc.close for cc in self._clients]
-        self._clients.clear()
-        self._mutex.unlock()
-        print('exitTcpClientsThread exit')
+        # [cc.close() for cc in self._clients]
+        # self._clients.clear()
+        # print('exitTcpClientsThread exit')
+        self._exit = True
 
     def sendData(self, data):
-        self._mutex.lock()
-        for client in self._clients:
-            client.send(data)
-        self._mutex.unlock()
+        self._queue.put(data)
 
     def run(self):
         """
@@ -46,50 +43,60 @@ class TcpClientsWorkThread(QtCore.QThread):
             1: ClientClose           客户端断开
             2: ClientConnectErr      客户端连接错误
             3: info_status           普通状态信息
+            4: clientThreadStart     客户端线程启动
+            5: clientThreadClose     客户端线程关闭
         """
         self._clients = list()
-        self._client_index = dict()
+        self.statusSignal.emit('4-clientThreadStart')
 
         # 创建客户端，并连接服务器
-        for i in range(1, self._count + 1):
+        for _ in range(1, self._count + 1):
             try:
                 cc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 cc.connect((self._ip, self._port))
                 self._clients.append(cc)
-                print('client index: ', i)
-                msg = "0-%s %d" % (cc.getsockname(), i)
+                msg = "0-%s" % str(cc.getsockname())
                 self.statusSignal.emit(msg)
-                self._client_index[cc] = i
             except Exception as err:
-                self.statusSignal.emit(str(err))
+                msg = "2-Connect error:%s" % str(err)
+                self.statusSignal.emit(msg)
         
         for cc in self._clients:
             cc.setblocking(False)
 
         # 使用事件循环来监听数据到达
         while True:
-            if len(self._clients) == 0:
+            if len(self._clients) == 0 or self._exit:
                 break
-            recvInput, _, _ = select.select(self._clients, [], [])
-            for client in recvInput:
-                with self._mutex.lock():
+            recvInput, sendOutput, _ = select.select(
+                self._clients, self._clients, []
+            )
+            if len(recvInput) == 0 and self._queue.empty():
+                QtCore.QThread.msleep(1)
+
+            if len(sendOutput):
+                if not self._queue.empty():
+                    data = self._queue.get()
+                    for client in sendOutput:
+                        client.send(data)
+            
+            if len(recvInput):
+                for client in recvInput:
                     data = client.recv(1000)
                     if data:
                         self.dataSignal.emit(data)
-                        # print(data)
-                        # if data.decode('gbk') == 'q':
-                        #     print('正常断开连接')
-                        #     break
                     else:
-                        msg = "1-%s %d ClientClose" % (
-                            client.getsockname(),
-                            self._client_index[client]
-                        )
+                        msg = "1-%s" % str(client.getsockname())
                         client.close()
                         self.statusSignal.emit(msg)
                         self._clients.remove(client)
                         if len(self._clients) == 0:
                             break
                 
-        [cc.close for cc in self._clients]
-        self.statusSignal.emit('3-TCPClientWorkThread exit')
+        count = len(self._clients)
+        for i in range(count):
+            msg = "1-%s" % str(self._clients[i].getsockname())
+            self._clients[i].close()
+            self.statusSignal.emit(msg)
+        self._clients.clear()
+        self.statusSignal.emit('5-clientThreadClose')

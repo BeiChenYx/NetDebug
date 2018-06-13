@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\TCPClients.ui'
+# Form implementation generated from reading ui file 'TCPClients.ui'
 #
 # Created by: PyQt5 UI code generator 5.10.1
 #
@@ -84,11 +84,9 @@ class Ui_Form(object):
         self.lineEdit_Clients_Count = QtWidgets.QLineEdit(self.groupBox_3)
         self.lineEdit_Clients_Count.setObjectName("lineEdit_Clients_Count")
         self.verticalLayout_2.addWidget(self.lineEdit_Clients_Count)
-        self.tableWidget = QtWidgets.QTableWidget(self.groupBox_3)
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(0)
-        self.tableWidget.setRowCount(0)
-        self.verticalLayout_2.addWidget(self.tableWidget)
+        self.listWidget = QtWidgets.QListWidget(self.groupBox_3)
+        self.listWidget.setObjectName("listWidget")
+        self.verticalLayout_2.addWidget(self.listWidget)
         self.gridLayout_3.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
         self.gridLayout_4.addWidget(self.groupBox_3, 0, 0, 2, 1)
         self.groupBox = QtWidgets.QGroupBox(Form)

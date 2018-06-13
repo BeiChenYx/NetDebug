@@ -209,14 +209,17 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.listWidget.setCurrentRow(0)
     
     def get_listView_select_text(self):
+        if self.listWidget.count() == 0:
+            return ''
         return self.listWidget.currentItem().text()
     
     def sendData(self, msg):
         addr = self.get_listView_select_text()
-        self.tcp_server.sendData(addr, msg)
-        self.label_TX.setText(
-            str(int(self.label_TX.text()) + len(msg))
-        )
+        if addr != '':
+            self.tcp_server.sendData(addr, msg)
+            self.label_TX.setText(
+                str(int(self.label_TX.text()) + len(msg))
+            )
 
     def on_pushButton_clear_count(self):
         self.label_RX.setText('0')

@@ -174,7 +174,7 @@
          <widget class="QLineEdit" name="lineEdit_Clients_Count"/>
         </item>
         <item>
-         <widget class="QTableWidget" name="tableWidget"/>
+         <widget class="QListWidget" name="listWidget"/>
         </item>
        </layout>
       </item>

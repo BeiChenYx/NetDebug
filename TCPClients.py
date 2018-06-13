@@ -26,7 +26,10 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
             1: self.clientClose,
             2: self.clientConnectErr,
             3: self.info_status,
+            4: self.clientThreadStart,
+            5: self.clientThreadClose,
         }
+        self._clients = list()
 
     def initUi(self):
         pass
@@ -87,11 +90,12 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
             self.tcp_clients.start()
         else:
             self.tcp_clients.exitTcpClientsThread()
-            self.tcp_clients.terminate()
+            self.tcp_clients.quit()
             self.tcp_clients.wait(1000)
 
     def on_workData(self, msg):
-        print(msg)
+        # print(msg)
+        self.textEdit.append(msg.decode('gbk'))
 
     def on_workStatus(self, msg):
         """
@@ -102,6 +106,8 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
             1: ClientClose           客户端断开
             2: ClientConnectErr      客户端连接错误
             3: info_status           普通状态信息
+            4: clientThreadStart
+            5: clientThreadClose
         """
         cmd, message = msg.split('-')
         self.handle_workStatus(int(cmd), message)
@@ -110,15 +116,35 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         self.cmd_status_func_dict[cmd](msg)
 
     def clientConnect(self, msg):
-        print(msg)
-        self.status_signal.emit(msg)
-        self.pushButton_Connect.setText('关闭')
+        self._clients.append(msg)
+        self.update_listWidget()
+        print('client connect')
 
     def clientClose(self, msg):
-        print(msg)
+        self._clients.remove(msg)
+        self.update_listWidget()
+        print('client close')
 
     def clientConnectErr(self, msg):
-        print(msg)
+        self.status_signal.emit(msg)
     
     def info_status(self, msg):
-        print(msg)
+        self.status_signal.emit(msg)
+
+    def clientThreadStart(self, msg):
+        self.status_signal.emit(msg)
+        self.pushButton_Connect.setText('关闭')
+        print('client 打开')
+
+    def clientThreadClose(self, msg):
+        self.status_signal.emit(msg)
+        self.pushButton_Connect.setText('连接')
+        print('client 退出')
+
+    def update_listWidget(self):
+        """
+        更新listView，如果self._clients为空则全都删除
+        """
+        self.listWidget.clear()
+        self.listWidget.addItems(self._clients)
+        self.listWidget.setCurrentRow(0)
