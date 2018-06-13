@@ -70,7 +70,9 @@ class SingleSend(QtWidgets.QWidget, Ui_Form):
         self.on_push_button_clicked()
 
     def on_check_Timers(self):
-        print('on_check_Timers')
+        if self.lineEdit_Times.text() == '':
+            self.status_signal.emit('循环间隔不能为空')
+            return
         if self.checkBox_Times.isChecked():
             self.timer.start(int(self.lineEdit_Times.text()))
         else:
