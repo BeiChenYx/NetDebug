@@ -29,6 +29,7 @@ class TcpClientsWorkThread(QtCore.QThread):
         [cc.close for cc in self._clients]
         self._clients.clear()
         self._mutex.unlock()
+        print('exitTcpClientsThread exit')
 
     def sendData(self, data):
         self._mutex.lock()

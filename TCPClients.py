@@ -15,15 +15,6 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
 
     status_signal = QtCore.pyqtSignal(str)
     def __init__(self, parent):
-        """
-        msg格式:
-        cmd-message
-        cmd:
-            0: ClientConnect         客户端已连接
-            1: ClientClose           客户端断开
-            2: ClientConnectErr      客户端连接错误
-            3: info_status           普通状态信息
-        """
         super(TcpClients, self).__init__(parent)
         self.setupUi(self)
         self._config_path = './NetDebug.ini'
@@ -41,7 +32,9 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         pass
 
     def initConnect(self):
-        pass
+        self.pushButton_Connect.clicked.connect(
+            self.on_pushButton_Connect_cliecked
+        )
 
     def initConfig(self):
         config = configparser.ConfigParser()
@@ -78,30 +71,54 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         }
         return config
 
-    def clientConnect(self):
-        self.tcp_clients = TcpClientsWorkThread(
-            self.lineEdit_IP.text(),
-            int(self.lineEdit_Port.text()),
-            int(self.lineEdit_Clients_Count.text())
-        )
-        self.tcp_clients.dataSignal.connect(
-            self.on_workData
-        )
-        self.tcp_clients.statusSignal.connect(
-            self.on_workStatus
-        )
+    def on_pushButton_Connect_cliecked(self):
+        if self.pushButton_Connect.text() == '连接':
+            self.tcp_clients = TcpClientsWorkThread(
+                self.lineEdit_IP.text(),
+                int(self.lineEdit_Port.text()),
+                int(self.lineEdit_Clients_Count.text())
+            )
+            self.tcp_clients.dataSignal.connect(
+                self.on_workData
+            )
+            self.tcp_clients.statusSignal.connect(
+                self.on_workStatus
+            )
+            self.tcp_clients.start()
+        else:
+            self.tcp_clients.exitTcpClientsThread()
+            self.tcp_clients.terminate()
+            self.tcp_clients.wait(1000)
 
-    def on_workData(self):
-        pass
+    def on_workData(self, msg):
+        print(msg)
 
-    def on_workStatus(self):
-        pass
+    def on_workStatus(self, msg):
+        """
+        msg格式:
+        cmd-message
+        cmd:
+            0: ClientConnect         客户端已连接
+            1: ClientClose           客户端断开
+            2: ClientConnectErr      客户端连接错误
+            3: info_status           普通状态信息
+        """
+        cmd, message = msg.split('-')
+        self.handle_workStatus(int(cmd), message)
 
-    def clientClose(self):
-        pass
+    def handle_workStatus(self, cmd, msg):
+        self.cmd_status_func_dict[cmd](msg)
 
-    def clientConnectErr(self):
-        pass
+    def clientConnect(self, msg):
+        print(msg)
+        self.status_signal.emit(msg)
+        self.pushButton_Connect.setText('关闭')
+
+    def clientClose(self, msg):
+        print(msg)
+
+    def clientConnectErr(self, msg):
+        print(msg)
     
-    def info_status(self):
-        pass
+    def info_status(self, msg):
+        print(msg)
