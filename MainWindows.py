@@ -6,6 +6,8 @@ from UI.ui_MainWindows import Ui_MainWindow
 
 from TCPServer import TcpServer
 from TCPClients import TcpClients
+from UDPServer import UdpServer
+from UDPClients import UdpClients
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -15,6 +17,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.tcp_server = TcpServer(self)
         self.tcp_clients = TcpClients(self)
+        self.udp_server = UdpServer(self)
+        self.udp_clients = UdpClients(self)
 
         self._config_path = './NetDebug.ini'
         self.tcp_server.status_signal.connect(
@@ -32,6 +36,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tabWidget.clear()
         self.tabWidget.addTab(self.tcp_server, 'TCP服务器')
         self.tabWidget.addTab(self.tcp_clients, 'TCP客户端')
+        self.tabWidget.addTab(self.udp_server, 'UDP服务器')
+        self.tabWidget.addTab(self.udp_clients, 'UDP客户端')
 
         self.setWindowIcon(QtGui.QIcon('./images/ico.png'))
         self.resize(760, 600)
