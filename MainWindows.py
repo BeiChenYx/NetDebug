@@ -27,6 +27,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tcp_clients.status_signal.connect(
             self.status_show
         )
+        self.udp_server.status_signal.connect(
+            self.status_show
+        )
+        self.udp_clients.status_signal.connect(
+            self.status_show
+        )
 
         self.initUi()
         self.setWindowTitle("网络调试助手")
