@@ -59,20 +59,19 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 self.checkBox_Pause_Display.setChecked(
                     tcp_server['pause'] == 'True'
                 )
-                self.checkBox_Recv_To_File.setChecked(
-                    tcp_server['readtofile'] == 'True'
-                )
+                # self.checkBox_Recv_To_File.setChecked(
+                #     tcp_server['readtofile'] == 'True'
+                # )
                 self.lineEdit_Recv_File_Path.setText(
                     tcp_server['readtofilepath']
                 )
-                self.checkBox_Input_Hex.setChecked(
-                    tcp_server['hexinput'] == 'True'
-                )
-                self.lineEdit_Input_File_Path.setText(
-                    tcp_server['inputFromfile']
-                )
-
-                # self.single_send.initConfig()
+                # self.checkBox_Input_Hex.setChecked(
+                #     tcp_server['hexinput'] == 'True'
+                # )
+                # self.lineEdit_Input_File_Path.setText(
+                #     tcp_server['inputFromfile']
+                # )
+                self.single_send.initConfig(tcp_server)
         except Exception as err:
             self.status_signal.emit(str(err))
 
@@ -84,10 +83,11 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
             'hexdisplay': str(self.checkBox_Display_Hex.isChecked()),
             'pause': str(self.checkBox_Pause_Display.isChecked()),
             # 'readtofile': str(self.checkBox_Recv_To_File.isChecked()),
-            # 'readtofilepath': self.lineEdit_Recv_File_Path.text(),
+            'readtofilepath': self.lineEdit_Recv_File_Path.text(),
             # 'hexinput': str(self.checkBox_Input_Hex.isChecked()),
             # 'inputFromfile': self.lineEdit_Input_File_Path.text(),
         }
+        config.update(self.single_send.update_config())
         return config
 
     def initConnect(self):
@@ -128,7 +128,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
             self.tcp_server.quit()
             self.tcp_server.wait(1000)
     
-    def on_workData(self, data):
+    def on_workData(self, addr, data):
         if self.checkBox_Pause_Display.isChecked():
             return
         if len(self.textEdit.toPlainText()) > 4096:
@@ -144,13 +144,25 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.textEdit.moveCursor(QtGui.QTextCursor.End)
         if self.checkBox_Display_Hex.isChecked():
             data_list = list(map(lambda x: '%02X' % x, data))
-            self.textEdit.insertPlainText(' '.join(data_list) + ' ' + date_time)
+            self.textEdit.insertPlainText(
+                '[Receiving the data coming to' +
+                str(addr) + ']:\n' + ' '.join(data_list) + ' ' + date_time
+            )
             if self.checkBox_Recv_To_File.isChecked():
-                self.save_file_name(' '.join(data_list) + ' ' + date_time)
+                self.save_file_name(
+                    '[Receiving the data coming to' +
+                    str(addr) + ']:\n' + ' '.join(data_list) + ' ' + date_time
+                )
         else:
-            self.textEdit.insertPlainText(data.decode('gbk', 'ignore') + date_time)
+            self.textEdit.insertPlainText(
+                '[Receiving the data coming to' +
+                str(addr) + ']:\n' + data.decode('gbk', 'ignore') + date_time
+            )
             if self.checkBox_Recv_To_File.isChecked():
-                self.save_file_name(data.decode('gbk', 'ignore') + date_time)
+                self.save_file_name(
+                    '[Receiving the data coming to' +
+                    str(addr) + ']:\n' + data.decode('gbk', 'ignore') + date_time
+                )
 
     def on_workStatus(self, msg):
         """
@@ -214,12 +226,15 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         return self.listWidget.currentItem().text()
     
     def sendData(self, msg):
-        addr = self.get_listView_select_text()
-        if addr != '':
-            self.tcp_server.sendData(addr, msg)
-            self.label_TX.setText(
-                str(int(self.label_TX.text()) + len(msg))
-            )
+        try:
+            addr = self.get_listView_select_text()
+            if addr != '':
+                self.tcp_server.sendData(addr, msg)
+                self.label_TX.setText(
+                    str(int(self.label_TX.text()) + len(msg))
+                )
+        except Exception as err:
+            self.status_signal.emit(str(err))
 
     def on_pushButton_clear_count(self):
         self.label_RX.setText('0')

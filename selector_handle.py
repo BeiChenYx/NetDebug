@@ -10,7 +10,7 @@ class TCPServerWorkThread(QtCore.QThread):
     """
     处理TCPServer的服务器线程
     """
-    dataSignal = QtCore.pyqtSignal(bytes)
+    dataSignal = QtCore.pyqtSignal(str, bytes)
     statusSignal = QtCore.pyqtSignal(str)
 
     def __init__(self, ip, port):
@@ -51,7 +51,7 @@ class TCPServerWorkThread(QtCore.QThread):
             self._mutx.lock()
             data = conn.recv(1000)
             if data:
-                self.dataSignal.emit(data)
+                self.dataSignal.emit(str(self._clients[conn]), data)
             else:
                 msg = "2-%s" % self._clients[conn]
                 sel.unregister(conn)

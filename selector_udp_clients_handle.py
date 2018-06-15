@@ -74,16 +74,20 @@ class UdpClientsWorkThread(QtCore.QThread):
                             self.dataSignal.emit(data)
                     except Exception as err:
                         msg = "0-%s" % str(err)
-                        msg = "4-%s" % str(self._clients[i].getsockname())
+                        msg = "4-%s" % str(client.getsockname())
                         client.close()
                         self.statusSignal.emit(msg)
                         self.statusSignal.emit(msg)
 
         count = len(self._clients)
         for i in range(count):
-            msg = "4-%s" % str(self._clients[i].getsockname())
-            self._clients[i].close()
-            self.statusSignal.emit(msg)
+            try:
+                msg = "4-%s" % str(self._clients[i].getsockname())
+                self.statusSignal.emit(msg)
+            except Exception:
+                pass
+            finally:
+                self._clients[i].close()
             
         self._clients.clear()
         self.statusSignal.emit("2-clientThreadClose")

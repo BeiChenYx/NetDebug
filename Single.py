@@ -30,17 +30,23 @@ class SingleSend(QtWidgets.QWidget, Ui_Form):
             self.on_check_hex
         )
 
-    def initConfig(self):
-        config = configparser.ConfigParser()
+    def initConfig(self, msg):
         try:
-            if os.path.exists(self._config_path):
-                config.read(self._config_path) 
-                tcp_server = config['TCPServer']
-                self.textEdit.insertPlainText(
-                    tcp_server['senddata']
-                )
+            self.textEdit.insertPlainText(msg['singlesenddata'])
+            self.checkBox_Hex.setChecked(
+                msg['singlehex'] == 'True'
+            )
+            self.lineEdit_Times.setText(msg['singletimes'])
         except Exception as err:
             self.status_signal.emit(str(err))
+
+    def update_config(self):
+        config = {
+            'singlesenddata': self.textEdit.toPlainText(),
+            'singlehex': str(self.checkBox_Hex.isChecked()),
+            'singletimes': self.lineEdit_Times.text()
+        }
+        return config
 
     def handle_data(self):
         """
@@ -74,7 +80,10 @@ class SingleSend(QtWidgets.QWidget, Ui_Form):
             self.status_signal.emit('循环间隔不能为空')
             return
         if self.checkBox_Times.isChecked():
-            self.timer.start(int(self.lineEdit_Times.text()))
+            try:
+                self.timer.start(int(self.lineEdit_Times.text()))
+            except Exception as err:
+                self.status_signal.emit(str(err))
         else:
             self.timer.stop()
 

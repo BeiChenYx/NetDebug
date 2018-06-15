@@ -51,11 +51,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def initConfig(self):
         self.tcp_server.initConfig()
         self.tcp_clients.initConfig()
+        self.udp_server.initConfig()
+        self.udp_clients.initConfig()
     
     def update_config(self):
         config = configparser.ConfigParser()
         config['TCPServer'] = self.tcp_server.update_config()
         config['TCPClients'] = self.tcp_clients.update_config()
+        config['UDPServer'] = self.udp_server.update_config()
+        config['UDPClients'] = self.udp_clients.update_config()
 
         with open(self._config_path, 'w', encoding='utf-8') as fi:
             config.write(fi)
@@ -63,7 +67,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def closeEvent(self, event):
         self.update_config()
-        self.tcp_server.on_pushButton_Connect()
         event.accept()
 
     def status_show(self, msg):

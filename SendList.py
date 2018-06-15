@@ -18,6 +18,106 @@ class SendList(QtWidgets.QWidget, Ui_Form):
         self.timer = QtCore.QTimer(self)
         self.init_connect()
 
+    def initConfig(self, msg):
+        try:
+            self.checkBox_Hex.setChecked(
+                msg['listhex'] == 'True'
+            )
+            self.lineEdit_Times.setText(msg['listtimes'])
+
+            self.checkBoxs1.setChecked(msg['listc1'] == 'True')
+            self.checkBoxs2.setChecked(msg['listc2'] == 'True')
+            self.checkBoxs3.setChecked(msg['listc3'] == 'True')
+            self.checkBoxs4.setChecked(msg['listc4'] == 'True')
+            self.checkBoxs5.setChecked(msg['listc5'] == 'True')
+            self.checkBoxs6.setChecked(msg['listc6'] == 'True')
+            self.checkBoxs7.setChecked(msg['listc7'] == 'True')
+            self.checkBoxss8.setChecked(msg['listc8'] == 'True')
+            self.checkBoxs9.setChecked(msg['listc9'] == 'True')
+            self.checkBoxs10.setChecked(msg['listc10'] == 'True')
+            self.checkBoxs11.setChecked(msg['listc11'] == 'True')
+            self.checkBoxs12.setChecked(msg['listc12'] == 'True')
+            self.checkBoxs13.setChecked(msg['listc13'] == 'True')
+            self.checkBoxs14.setChecked(msg['listc14'] == 'True')
+            self.checkBoxs15.setChecked(msg['listc15'] == 'True')
+            self.checkBoxs16.setChecked(msg['listc16'] == 'True')
+            self.checkBoxs17.setChecked(msg['listc17'] == 'True')
+            self.checkBoxs18.setChecked(msg['listc18'] == 'True')
+            self.checkBoxs19.setChecked(msg['listc19'] == 'True')
+            self.checkBoxs20.setChecked(msg['listc20'] == 'True')
+
+            self.lineEdits1.setText(msg['line1'])
+            self.lineEdits2.setText(msg['line2'])
+            self.lineEdits3.setText(msg['line3'])
+            self.lineEdits4.setText(msg['line4'])
+            self.lineEdits5.setText(msg['line5'])
+            self.lineEdits6.setText(msg['line6'])
+            self.lineEdits7.setText(msg['line7'])
+            self.lineEdits8.setText(msg['line8'])
+            self.lineEdits9.setText(msg['line9'])
+            self.lineEdits10.setText(msg['line10'])
+            self.lineEdits11.setText(msg['line11'])
+            self.lineEdits12.setText(msg['line12'])
+            self.lineEdits13.setText(msg['line13'])
+            self.lineEdits14.setText(msg['line14'])
+            self.lineEdits15.setText(msg['line15'])
+            self.lineEdits16.setText(msg['line16'])
+            self.lineEdits17.setText(msg['line17'])
+            self.lineEdits18.setText(msg['line18'])
+            self.lineEdits19.setText(msg['line19'])
+            self.lineEdits20.setText(msg['line20'])
+        except Exception as err:
+            self.status_signal.emit(str(err))
+
+    def update_config(self):
+        config = {
+            'listhex': str(self.checkBox_Hex.isChecked()),
+            'listtimes': self.lineEdit_Times.text(),
+
+            'listc1': str(self.checkBoxs1.isChecked()),
+            'listc2': str(self.checkBoxs2.isChecked()),
+            'listc3': str(self.checkBoxs3.isChecked()),
+            'listc4': str(self.checkBoxs4.isChecked()),
+            'listc5': str(self.checkBoxs5.isChecked()),
+            'listc6': str(self.checkBoxs6.isChecked()),
+            'listc7': str(self.checkBoxs7.isChecked()),
+            'listc8': str(self.checkBoxss8.isChecked()),
+            'listc9': str(self.checkBoxs9.isChecked()),
+            'listc10': str(self.checkBoxs10.isChecked()),
+            'listc11': str(self.checkBoxs11.isChecked()),
+            'listc12': str(self.checkBoxs12.isChecked()),
+            'listc13': str(self.checkBoxs13.isChecked()),
+            'listc14': str(self.checkBoxs14.isChecked()),
+            'listc15': str(self.checkBoxs15.isChecked()),
+            'listc16': str(self.checkBoxs16.isChecked()),
+            'listc17': str(self.checkBoxs17.isChecked()),
+            'listc18': str(self.checkBoxs18.isChecked()),
+            'listc19': str(self.checkBoxs19.isChecked()),
+            'listc20': str(self.checkBoxs20.isChecked()),
+
+            'line1': self.lineEdits1.text(),
+            'line2': self.lineEdits2.text(),
+            'line3': self.lineEdits3.text(),
+            'line4': self.lineEdits4.text(),
+            'line5': self.lineEdits5.text(),
+            'line6': self.lineEdits6.text(),
+            'line7': self.lineEdits7.text(),
+            'line8': self.lineEdits8.text(),
+            'line9': self.lineEdits9.text(),
+            'line10': self.lineEdits10.text(),
+            'line11': self.lineEdits11.text(),
+            'line12': self.lineEdits12.text(),
+            'line13': self.lineEdits13.text(),
+            'line14': self.lineEdits14.text(),
+            'line15': self.lineEdits15.text(),
+            'line16': self.lineEdits16.text(),
+            'line17': self.lineEdits17.text(),
+            'line18': self.lineEdits18.text(),
+            'line19': self.lineEdits19.text(),
+            'line20': self.lineEdits20.text(),
+        }
+        return config
+
     def handle_data(self, msg):
         if self.checkBox_Hex.isChecked():
             try:
@@ -168,7 +268,10 @@ class SendList(QtWidgets.QWidget, Ui_Form):
             self.status_signal.emit('循环间隔不能为空')
             return
         if self.checkBox_Times.isChecked():
-            self.timer.start(int(self.lineEdit_Times.text()))
+            try:
+                self.timer.start(int(self.lineEdit_Times.text()))
+            except Exception as err:
+                self.status_signal.emit(str(err))
         else:
             self.timer.stop()
 

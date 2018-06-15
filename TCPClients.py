@@ -86,7 +86,8 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
                 self.lineEdit_Clients_Count.setText(
                     tcp_clients['count']
                 )
-
+                self.single_send.initConfig(tcp_clients)
+                self.send_list.initConfig(tcp_clients)
         except Exception as err:
             self.status_signal.emit(str(err))
         
@@ -99,6 +100,8 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
             'pause': str(self.checkBox_Pause.isChecked()),
             'count': self.lineEdit_Clients_Count.text(),
         }
+        config.update(self.single_send.update_config())
+        config.update(self.send_list.update_config())
         return config
 
     def on_pushButton_clear_display(self):
@@ -110,18 +113,21 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
 
     def on_pushButton_Connect_cliecked(self):
         if self.pushButton_Connect.text() == '连接':
-            self.tcp_clients = TcpClientsWorkThread(
-                self.lineEdit_IP.text(),
-                int(self.lineEdit_Port.text()),
-                int(self.lineEdit_Clients_Count.text())
-            )
-            self.tcp_clients.dataSignal.connect(
-                self.on_workData
-            )
-            self.tcp_clients.statusSignal.connect(
-                self.on_workStatus
-            )
-            self.tcp_clients.start()
+            try:
+                self.tcp_clients = TcpClientsWorkThread(
+                    self.lineEdit_IP.text(),
+                    int(self.lineEdit_Port.text()),
+                    int(self.lineEdit_Clients_Count.text())
+                )
+                self.tcp_clients.dataSignal.connect(
+                    self.on_workData
+                )
+                self.tcp_clients.statusSignal.connect(
+                    self.on_workStatus
+                )
+                self.tcp_clients.start()
+            except Exception as err:
+                self.status_signal.emit(str(err))
         else:
             self.tcp_clients.exitTcpClientsThread()
             self.tcp_clients.quit()
@@ -198,10 +204,13 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         self.listWidget.setCurrentRow(0)
 
     def sendData(self, msg):
-        self.tcp_clients.sendData(msg)
-        self.label_TX.setText(
-            str(int(self.label_TX.text()) + len(msg))
-        )
+        try:
+            self.tcp_clients.sendData(msg)
+            self.label_TX.setText(
+                str(int(self.label_TX.text()) + len(msg))
+            )
+        except Exception as err:
+            self.status_signal.emit(str(err))
 
     def get_date_time(self):
         return time.strftime(' [%Y-%m-%d %H:%M:%S]\n', time.localtime())

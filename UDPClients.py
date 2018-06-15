@@ -30,6 +30,7 @@ class UdpClients(QtWidgets.QWidget, Ui_Form):
         super(UdpClients, self).__init__(parent)
         self.setupUi(self)
         self.pushButton_Connect.setText('创建')
+        self._config_path = './NetDebug.ini'
         self.initUi()
         self.init_connect()
         self.cmd_status_func_dict = {
@@ -74,20 +75,61 @@ class UdpClients(QtWidgets.QWidget, Ui_Form):
             self.status_signal
         )
 
+    def initConfig(self):
+        config = configparser.ConfigParser()
+        try:
+            if os.path.exists(self._config_path):
+                config.read(self._config_path)
+                tcp_clients = config['UDPClients']
+                self.lineEdit_IP.setText(tcp_clients['serverip'])
+                self.lineEdit_Port.setText(tcp_clients['serverport'])
+                self.checkBox_Display_Time.setChecked(
+                    tcp_clients['displayrecvetime'] == 'True'
+                )
+                self.checkBox_Display_Hex.setChecked(
+                    tcp_clients['hexdisplay'] == 'True'
+                )
+                self.checkBox_Pause.setChecked(
+                    tcp_clients['pause'] == 'True'
+                )
+                self.lineEdit_Clients_Count.setText(
+                    tcp_clients['count']
+                )
+            self.single_send.initConfig(tcp_clients)
+            self.send_list.initConfig(tcp_clients)
+        except Exception as err:
+            self.status_signal.emit(str(err))
+
+    def update_config(self):
+        config = {
+            'serverip': self.lineEdit_IP.text(),
+            'serverport': self.lineEdit_Port.text(),
+            'displayrecvetime': str(self.checkBox_Display_Time.isChecked()),
+            'hexdisplay': str(self.checkBox_Display_Hex.isChecked()),
+            'pause': str(self.checkBox_Pause.isChecked()),
+            'count': self.lineEdit_Clients_Count.text(),
+        }
+        config.update(self.single_send.update_config())
+        config.update(self.send_list.update_config())
+        return config
+
     def on_pushButton_connect(self):
         if self.pushButton_Connect.text() == '创建':
-            self.udp_clients = UdpClientsWorkThread(
-                self.lineEdit_IP.text(),
-                int(self.lineEdit_Port.text()),
-                int(self.lineEdit_Clients_Count.text())
-            )
-            self.udp_clients.dataSignal.connect(
-                self.on_workData
-            )
-            self.udp_clients.statusSignal.connect(
-                self.on_workStatus
-            )
-            self.udp_clients.start()
+            try:
+                self.udp_clients = UdpClientsWorkThread(
+                    self.lineEdit_IP.text(),
+                    int(self.lineEdit_Port.text()),
+                    int(self.lineEdit_Clients_Count.text())
+                )
+                self.udp_clients.dataSignal.connect(
+                    self.on_workData
+                )
+                self.udp_clients.statusSignal.connect(
+                    self.on_workStatus
+                )
+                self.udp_clients.start()
+            except Exception as err:
+                self.status_signal.emit(str(err)) 
         else:
             self.udp_clients.exitUdpClientsThread()
             self.udp_clients.quit()
@@ -140,10 +182,13 @@ class UdpClients(QtWidgets.QWidget, Ui_Form):
         self.label_TX.setText('0')
 
     def sendData(self, data):
-        self.udp_clients.sendData(data)
-        self.label_TX.setText(
-            str(int(self.label_TX.text()) + len(data))
-        )
+        try:
+            self.udp_clients.sendData(data)
+            self.label_TX.setText(
+                str(int(self.label_TX.text()) + len(data))
+            )
+        except Exception as err:
+            self.status_signal.emit(str(err))
 
     def get_date_time(self):
         return time.strftime(' [%Y-%m-%d %H:%M:%S]\n', time.localtime())

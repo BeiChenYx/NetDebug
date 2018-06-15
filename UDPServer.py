@@ -53,6 +53,54 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
             self.status_signal
         )
 
+    def initConfig(self):
+        config = configparser.ConfigParser()
+        try:
+            if os.path.exists(self._config_path):
+                config.read(self._config_path) 
+                tcp_server = config['UDPServer']
+                self.lineEdit_IP.setText(tcp_server['localip'])
+                self.lineEdit_Port.setText(tcp_server['localport'])
+                self.checkBox_Display_Time.setChecked(
+                    tcp_server['displayrecvetime'] == 'True'
+                )
+                self.checkBox_Display_Hex.setChecked(
+                    tcp_server['hexdisplay'] == 'True'
+                )
+                self.checkBox_Pause_Display.setChecked(
+                    tcp_server['pause'] == 'True'
+                )
+                # self.checkBox_Recv_To_File.setChecked(
+                #     tcp_server['readtofile'] == 'True'
+                # )
+                self.lineEdit_Recv_File_Path.setText(
+                    tcp_server['readtofilepath']
+                )
+                # self.checkBox_Input_Hex.setChecked(
+                #     tcp_server['hexinput'] == 'True'
+                # )
+                # self.lineEdit_Input_File_Path.setText(
+                #     tcp_server['inputFromfile']
+                # )
+                self.single_send.initConfig(tcp_server)
+        except Exception as err:
+            self.status_signal.emit(str(err))
+
+    def update_config(self):
+        config = {
+            'localip': self.lineEdit_IP.text(),
+            'localport': self.lineEdit_Port.text(),
+            'displayrecvetime': str(self.checkBox_Display_Time.isChecked()),
+            'hexdisplay': str(self.checkBox_Display_Hex.isChecked()),
+            'pause': str(self.checkBox_Pause_Display.isChecked()),
+            # 'readtofile': str(self.checkBox_Recv_To_File.isChecked()),
+            'readtofilepath': self.lineEdit_Recv_File_Path.text(),
+            # 'hexinput': str(self.checkBox_Input_Hex.isChecked()),
+            # 'inputFromfile': self.lineEdit_Input_File_Path.text(),
+        }
+        config.update(self.single_send.update_config())
+        return config
+
     def on_pushButton_Connect(self):
         if self.pushButton_Connect.text() == '连接':
             self.udp_server = UDPServerWorkThread(
@@ -91,13 +139,25 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
         self.textEdit.moveCursor(QtGui.QTextCursor.End)
         if self.checkBox_Display_Hex.isChecked():
             data_list = list(map(lambda x: '%02X' % x, data))
-            self.textEdit.insertPlainText(' '.join(data_list) + ' ' + date_time)
+            self.textEdit.insertPlainText(
+                '[Receiving the data coming to' +
+                str(addr) + ']:\n' + ' '.join(data_list) + ' ' + date_time
+            )
             if self.checkBox_Recv_To_File.isChecked():
-                self.save_file_name(' '.join(data_list) + ' ' + date_time)
+                self.save_file_name(
+                    '[Receiving the data coming to' +
+                    str(addr) + ']:\n' + ' '.join(data_list) + ' ' + date_time
+                )
         else:
-            self.textEdit.insertPlainText(data.decode('gbk', 'ignore') + date_time)
+            self.textEdit.insertPlainText(
+                '[Receiving the data coming to' +
+                str(addr) + ']:\n' + data.decode('gbk', 'ignore') + date_time
+            )
             if self.checkBox_Recv_To_File.isChecked():
-                self.save_file_name(data.decode('gbk', 'ignore') + date_time)
+                self.save_file_name(
+                    '[Receiving the data coming to' +
+                    str(addr) + ']:\n' + data.decode('gbk', 'ignore') + date_time
+                )
 
     def on_workStatus(self, msg):
         cmd, message = msg.split('-')
@@ -149,12 +209,15 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
         return time.strftime(' [%Y-%m-%d %H:%M:%S]\n', time.localtime())
 
     def sendData(self, msg):
-        addr = self.get_listView_select_text()
-        if addr != '':
-            self.udp_server.sendData(addr, msg)
-            self.label_TX.setText(
-                str(int(self.label_TX.text()) + len(msg))
-            )
+        try:
+            addr = self.get_listView_select_text()
+            if addr != '':
+                self.udp_server.sendData(addr, msg)
+                self.label_TX.setText(
+                    str(int(self.label_TX.text()) + len(msg))
+                )
+        except Exception as err:
+            self.status_signal.emit(str(err))
 
     def get_listView_select_text(self):
         if self.listWidget.count() == 0:
