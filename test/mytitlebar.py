@@ -68,25 +68,31 @@ class MyTitleBar(QtWidgets.QWidget):
         """
         设置标题栏背景色
         """
-        pass
+        self.m_colorR = r
+        self.m_colorG = g
+        self.m_colorB = b
+        self.update()
 
     def setTitleIcon(self, filePath):
         """
         设置标题栏图标
         """
-        pass
+        titleIcon = QtGui.QPixmap(filePath)
+        # 设置图标，并缩放
+        self.m_pIcon.setPixmap(titleIcon.scaled(25, 25))
 
     def setTitleContent(self, titleContent):
         """
         设置标题内容
         """
-        pass
+        self.m_pTitleContent.setText(titleContent)
+        self.m_titleContent = titleContent
 
     def setTitleWidth(self, width):
         """
         设置标题栏长度
         """
-        pass
+        self.setFixedWidth(width)
 
     def setButtonType(self, buttonType):
         """
@@ -173,7 +179,18 @@ class MyTitleBar(QtWidgets.QWidget):
         """
         信号槽的绑定
         """
-        pass
+        self.m_pButtonMin.clicked.connect(
+            self.onButtonMinClicked
+        )
+        self.m_pButtonRestore.clicked.connect(
+            self.onButtonRestoreClicked
+        )
+        self.m_pButtonMax.clicked.connect(
+            self.onButtonMaxClicked
+        )
+        self.m_pButtonClose.clicked.connect(
+            self.onButtonCloseClicked
+        )
 
     def loadStyleSheet(self, sheetName):
         """
