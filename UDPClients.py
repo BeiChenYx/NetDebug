@@ -152,8 +152,8 @@ class UdpClients(QtWidgets.QWidget, Ui_Form):
         if self.checkBox_Display_Hex.isChecked():
             data_list = list(map(lambda x: '%02X' % x, data))
             self.textEdit.insertPlainText(' '.join(data_list) + ' ' + date_time)
-            if self.checkBox_Recv_To_File.isChecked():
-                self.save_file_name(' '.join(data_list) + ' ' + date_time)
+            # if self.checkBox_Recv_To_File.isChecked():
+            #     self.save_file_name(' '.join(data_list) + ' ' + date_time)
         else:
             self.textEdit.insertPlainText(data.decode('gbk', 'ignore') + date_time)
 

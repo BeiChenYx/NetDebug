@@ -60,29 +60,32 @@ class TCPServerWorkThread(QtCore.QThread):
                 self.statusSignal.emit(msg)
             self._mutx.unlock()
 
-        sock = socket.socket()
-        sock.bind((self._ip, self._port))
-        sock.listen(100)
-        sock.setblocking(False)
-        sel = selectors.DefaultSelector()
-        sel.register(sock, selectors.EVENT_READ, accept)
+        try:
+            sock = socket.socket()
+            sock.bind((self._ip, self._port))
+            sock.listen(100)
+            sock.setblocking(False)
+            sel = selectors.DefaultSelector()
+            sel.register(sock, selectors.EVENT_READ, accept)
+            msg = "3-TCPServerStart"
+            self.statusSignal.emit(msg)
 
-        msg = "3-TCPServerStart"
-        self.statusSignal.emit(msg)
-        while True:
-            if self._exit:
-                msg = "4-TCPServerClose"
-                self.statusSignal.emit(msg)
-                break
-            # 事件循环，只有等到有客户端进入/退出/接收数据才会响应
-            # 因此在断开时使用一个本地client来触发
-            events = sel.select()
-            for key, mask in events:
-                func = key.data
-                obj = key.fileobj
-                func(obj, mask)
+            while True:
+                if self._exit:
+                    msg = "4-TCPServerClose"
+                    self.statusSignal.emit(msg)
+                    break
+                # 事件循环，只有等到有客户端进入/退出/接收数据才会响应
+                # 因此在断开时使用一个本地client来触发
+                events = sel.select()
+                for key, mask in events:
+                    func = key.data
+                    obj = key.fileobj
+                    func(obj, mask)
 
-        # 断开所有客户端连接
-        [conn.close() for conn in self._clients]
-        sock.close()
-        sel.close()
+            # 断开所有客户端连接
+            [conn.close() for conn in self._clients]
+            sock.close()
+            sel.close()
+        except Exception as err:
+            self.statusSignal.emit('0-%s' % str(err))

@@ -33,35 +33,38 @@ class UDPServerWorkThread(QtCore.QThread):
             1: serverThreadStart
             2: serverThreadClose
         """
-        self._clients = list()
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.bind((self._ip, self._port))
-        sock.setblocking(False)
+        try:
+            self._clients = list()
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.bind((self._ip, self._port))
+            sock.setblocking(False)
 
-        msg = "1-UdpServerStart"
-        self.statusSignal.emit(msg)
-        while True:
-            if self._exit:
-                break
+            msg = "1-UdpServerStart"
+            self.statusSignal.emit(msg)
+            while True:
+                if self._exit:
+                    break
 
-            recvInput, sendOutput, _ = select.select(
-                [sock, ], [sock, ], []
-            )
-            if len(recvInput) == 0 and self._queue.empty():
-                QtCore.QThread.msleep(1)
-            if len(sendOutput) and len(self._clients):
-                if not self._queue.empty():
-                    addr, data = self._queue.get()
-                    sock.sendto(data, eval(addr))
-                    
-            if len(recvInput):
-                data, addr = sock.recvfrom(1000)
-                print('addr: ', addr)
-                print('data: ', data)
-                self.dataSignal.emit(str(addr), data)
-                self._clients.append(addr)
+                recvInput, sendOutput, _ = select.select(
+                    [sock, ], [sock, ], []
+                )
+                if len(recvInput) == 0 and self._queue.empty():
+                    QtCore.QThread.msleep(1)
+                if len(sendOutput) and len(self._clients):
+                    if not self._queue.empty():
+                        addr, data = self._queue.get()
+                        sock.sendto(data, eval(addr))
+                        
+                if len(recvInput):
+                    data, addr = sock.recvfrom(1000)
+                    print('addr: ', addr)
+                    print('data: ', data)
+                    self.dataSignal.emit(str(addr), data)
+                    self._clients.append(addr)
 
-        self._clients.clear()
-        sock.close()
-        msg = "2-UdpServerClose"
-        self.statusSignal.emit(msg)
+            self._clients.clear()
+            sock.close()
+            msg = "2-UdpServerClose"
+            self.statusSignal.emit(msg)
+        except Exception as err:
+            self.statusSignal.emit('0-%s' % str(err))

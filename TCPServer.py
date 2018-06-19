@@ -59,18 +59,9 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 self.checkBox_Pause_Display.setChecked(
                     tcp_server['pause'] == 'True'
                 )
-                # self.checkBox_Recv_To_File.setChecked(
-                #     tcp_server['readtofile'] == 'True'
-                # )
                 self.lineEdit_Recv_File_Path.setText(
                     tcp_server['readtofilepath']
                 )
-                # self.checkBox_Input_Hex.setChecked(
-                #     tcp_server['hexinput'] == 'True'
-                # )
-                # self.lineEdit_Input_File_Path.setText(
-                #     tcp_server['inputFromfile']
-                # )
                 self.single_send.initConfig(tcp_server)
         except Exception as err:
             self.status_signal.emit(str(err))
@@ -82,10 +73,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
             'displayrecvetime': str(self.checkBox_Display_Time.isChecked()),
             'hexdisplay': str(self.checkBox_Display_Hex.isChecked()),
             'pause': str(self.checkBox_Pause_Display.isChecked()),
-            # 'readtofile': str(self.checkBox_Recv_To_File.isChecked()),
             'readtofilepath': self.lineEdit_Recv_File_Path.text(),
-            # 'hexinput': str(self.checkBox_Input_Hex.isChecked()),
-            # 'inputFromfile': self.lineEdit_Input_File_Path.text(),
         }
         config.update(self.single_send.update_config())
         return config
