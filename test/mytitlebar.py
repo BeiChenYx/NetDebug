@@ -3,6 +3,11 @@ from enum import Enum
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
+BUTTON_HEIGHT = 30
+BUTTON_WIDTH = 30
+TITLE_HEIGHT = 30
+
+
 class ButtonType(Enum):
     MIN_BUTTON = 0
     MIN_MAX_BUTTON = 1
@@ -54,6 +59,10 @@ class MyTitleBar(QtWidgets.QWidget):
 
         # 按钮类型
         self.m_buttonType = ButtonType()
+
+        self.initControl()
+        self.initConnections()
+        self.loadStyleSheet('MyTitle')
 
     def setBackgroundColor(self, r, g, b):
         """
@@ -122,7 +131,43 @@ class MyTitleBar(QtWidgets.QWidget):
         """
         初始化控件
         """
-        pass
+        self.m_pButtonMin.setFixedSize(QtCore.QSize(
+            BUTTON_WIDTH, BUTTON_HEIGHT
+        ))
+        self.m_pButtonRestore.setFixedSize(QtCore.QSize(
+            BUTTON_WIDTH, BUTTON_HEIGHT
+        ))
+        self.m_pButtonMax.setFixedSize(QtCore.QSize(
+            BUTTON_WIDTH, BUTTON_HEIGHT
+        ))
+        self.m_pButtonClose.setFixedSize(QtCore.QSize(
+            BUTTON_WIDTH, BUTTON_HEIGHT
+        ))
+
+        self.m_pTitleContent.setObjectName("TitleContent")
+        self.m_pButtonMin.setObjectName("ButtonMin")
+        self.m_pButtonRestore.setObjectName("ButtonRestore")
+        self.m_pButtonMax.setObjectName("ButtonMax")
+        self.m_pButtonClose.setObjectName("ButtonClose")
+
+        self.mylayout = QtWidgets.QHBoxLayout(self)
+        self.mylayout.addWidget(self.m_pIcon)
+        self.mylayout.addWidget(self.m_pTitleContent)
+
+        self.mylayout.addWidget(self.m_pButtonMin)
+        self.mylayout.addWidget(self.m_pButtonRestore)
+        self.mylayout.addWidget(self.m_pButtonMax)
+        self.mylayout.addWidget(self.m_pButtonClose)
+
+        self.mylayout.setContentsMargins(5, 0, 0, 0)
+        self.mylayout.setSpacing(0) 
+
+        self.m_pTitleContent.setSizePolicy(
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Fixed
+        )
+        self.setFixedHeight(TITLE_HEIGHT)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
     def initConnections(self):
         """
