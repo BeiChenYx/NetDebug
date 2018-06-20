@@ -131,7 +131,7 @@ class MyTitleBar(QtWidgets.QWidget):
         self.m_restorePos = point
         self.m_restoreSize = size
 
-    def getRestoreInfo(self, point, size):
+    def getRestoreInfo(self):
         """
         获取最大化前窗口的位置和大小
         """
@@ -159,7 +159,7 @@ class MyTitleBar(QtWidgets.QWidget):
         if self.width() != self.parentWidget().width():
             self.setFixedWidth(self.parentWidget().width())
 
-        QtWidgets.QWidget.paintEvent(event)
+        return QtWidgets.QWidget.paintEvent(event)
 
     def mouseDoubleClickEvent(self, event):
         """
