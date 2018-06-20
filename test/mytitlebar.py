@@ -50,6 +50,7 @@ class MyTitleBar(QtWidgets.QWidget):
 
         # 移动窗口的变量
         self.m_isPressed = False
+        self.m_startMovePos = QtCore.QPoint()
 
         # 标题栏跑马灯效果时钟
         self.m_titleRollTimer = QtCore.QTimer()
@@ -59,6 +60,9 @@ class MyTitleBar(QtWidgets.QWidget):
 
         # 按钮类型
         self.m_buttonType = ButtonType()
+
+        # 标题栏中的标题滚动的位置
+        self._nPos = 0
 
         self.initControl()
         self.initConnections()
@@ -98,40 +102,116 @@ class MyTitleBar(QtWidgets.QWidget):
         """
         设置标题栏上按钮类型
         """
-        pass
+        self.m_buttonType = buttonType
+        if buttonType == ButtonType.MIN_BUTTON:
+            self.m_pButtonRestore.setVisible(False)
+            self.m_pButtonMax.setVisible(False)
+        elif buttonType == ButtonType.MIN_MAX_BUTTON:
+            self.m_pButtonRestore.setVisible(False)
+        elif buttonType == ButtonType.ONLY_CLOSE_BUTTON:
+            self.m_pButtonRestore.setVisible(False)
+            self.m_pButtonMax.setVisible(False)
+            self.m_pButtonMin.setVisible(False) 
+        else:
+            pass
 
     def setTitleRoll(self):
         """
         设置标题栏中的标题是否会滚动，具体可以看到效果
         """
-        pass
+        self.m_titleRollTimer.timeout.connect(
+            self.onRollTitle
+        )
+        self.m_titleRollTimer.start(200)
 
     def saveRestoreInfo(self, point, size):
         """
         保存最大化前窗口的位置和大小
         """
-        pass
+        self.m_restorePos = point
+        self.m_restoreSize = size
 
     def getRestoreInfo(self, point, size):
         """
         获取最大化前窗口的位置和大小
         """
-        pass
+        return (self.m_restorePos, self.m_restoreSize)
 
     def paintEvent(self, event):
-        pass
+        """
+        绘制标题栏背景色
+        """
+        painter = QtGui.QPainter(self)
+        pathBack = QtGui.QPainterPath()
+        pathBack.setFillRule(QtCore.Qt.WindingFill)
+        pathBack.addRoundedRect(
+            QtCore.QRect(0, 0, self.width(), self.height()),
+            3, 3
+        )
+        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
+        painter.fillPath(
+            pathBack,
+            QtGui.QBrush(QtGui.QColor(
+                self.m_colorR, self.m_colorG, self.m_colorB
+            ))
+        )
+        # 当窗口最大化或者还原后，窗口长度变了，标题的长度应该一起改变
+        if self.width() != self.parentWidget().width():
+            self.setFixedWidth(self.parentWidget().width())
+
+        QtWidgets.QWidget.paintEvent(event)
 
     def mouseDoubleClickEvent(self, event):
-        pass
+        """
+        双击响应事件，主要实现双击标题栏进行最大化和还原的操作
+        """
+        if self.m_buttonType == ButtonType.MIN_MAX_BUTTON:
+            # 通过最大化按钮的状态判断当前窗口是处于最大化还是
+            # 原始大小状态或者通过单独设置变量来表示当前窗口状态
+            if self.m_pButtonMax.isVisible():
+                self.onButtonMaxClicked()
+            else:
+                self.onButtonRestoreClicked()
+
+        return QtWidgets.QWidget.mouseDoubleClickEvent(event)
 
     def mousePressClickEvent(self, event):
-        pass
+        """
+        通过mousePressEvent, mouseMoveEvent,mouseReleaseEvent
+        三个事件来实现鼠标拖动标题栏移动窗口的效果
+        """
+        if self.m_buttonType == ButtonType.MIN_MAX_BUTTON:
+            # 窗口最大化时禁止拖动窗口
+            if self.m_pButtonMax.isVisible():
+                self.m_isPressed = True
+                self.m_startMovePos = event.globalPos()
+        else:
+            self.m_isPressed = True
+            self.m_startMovePos = event.globalPos()
+        return QtWidgets.QWidget.mousePressEvent()
 
     def mouseMoveEvent(self, event):
-        pass
+        """
+        通过mousePressEvent, mouseMoveEvent,mouseReleaseEvent
+        三个事件来实现鼠标拖动标题栏移动窗口的效果
+        """
+        if self.m_isPressed:
+            movePoint = event.globalPos() - self.m_startMovePos
+            widgetPos = self.parentWidget.pos()
+            self.m_startMovePos = event.globalPos()
+            self.parentWidget().move(
+                widgetPos.x() + movePoint.x(),
+                widgetPos.y() + movePoint.y()
+            )
+        return QtWidgets.QWidget.mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
-        pass
+        """
+        通过mousePressEvent, mouseMoveEvent,mouseReleaseEvent
+        三个事件来实现鼠标拖动标题栏移动窗口的效果
+        """
+        self.m_isPressed = False
+        return QtWidgets.QWidget.mouseReleaseEvent(event)
 
     def initControl(self):
         """
@@ -196,17 +276,39 @@ class MyTitleBar(QtWidgets.QWidget):
         """
         加载样式文件
         """
-        pass
+        with open("./Resources/%s.css" % sheetName,
+                  'r', encoding='gbk') as fi:
+            styleSheet = self.styleSheet()
+            styleSheet += fi.read()
+            self.setStyleSheet(styleSheet)
 
     # 按钮触发的槽
     def onButtonMinClicked(self):
-        pass
+        self.signalButtonMinClicked.emit()
+
     def onButtonRestoreClicked(self):
-        pass
+        self.m_pButtonRestore.setVisible(False)
+        self.m_pButtonMax.setVisible(True)
+        self.signalButtonRestoreClicked.emit()
+
     def onButtonMaxClicked(self):
-        pass
+        self.m_pButtonRestore.setVisible(True)
+        self.m_pButtonMax.setVisible(False)
+        self.signalButtonMinClicked.emit()
+
     def onButtonCloseClicked(self):
-        pass
+        self.signalButtonMinClicked.emit()
+
     def onRollTitle(self):
-        pass
+        """
+        让标题栏中的标题显示为滚动的效果
+        """
+        titleContent = self.m_titleContent
+        if self._nPos > len(titleContent):
+            self._nPos = 0
+        
+        self.m_pTitleContent.setText(
+            titleContent.mid(self._nPos)
+        )
+        self._nPos += 1
 
