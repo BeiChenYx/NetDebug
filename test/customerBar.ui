@@ -13,16 +13,25 @@
     <height>405</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <property name="leftMargin">
      <number>0</number>
     </property>
     <property name="topMargin">
-     <number>25</number>
+     <number>0</number>
     </property>
     <property name="rightMargin">
      <number>0</number>
@@ -30,13 +39,142 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
-    <property name="horizontalSpacing">
-     <number>0</number>
-    </property>
-    <property name="verticalSpacing">
-     <number>3</number>
-    </property>
-    <item row="0" column="0">
+    <item>
+     <widget class="QWidget" name="myBar" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>30</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">/*最小化按钮*/
+QPushButton#ButtonMin
+{
+    border-image:url(:/Resources/MyTitle/min.png) 0 81 0 0 ;
+}
+
+QPushButton#ButtonMin:hover
+{
+    border-image:url(:/Resources/MyTitle/min.png) 0 54 0 27 ;
+}
+
+QPushButton#ButtonMin:pressed
+{
+    border-image:url(:/Resources/MyTitle/min.png) 0 27 0 54 ;
+}
+
+/*最大化按钮*/
+QPushButton#ButtonMax
+{
+    border-image:url(:/Resources/MyTitle/max.png) 0 81 0 0 ;
+}
+
+QPushButton#ButtonMax:hover
+{
+    border-image:url(:/Resources/MyTitle/max.png) 0 54 0 27 ;
+}
+
+QPushButton#ButtonMax:pressed
+{
+    border-image:url(:/Resources/MyTitle/max.png) 0 27 0 54 ;
+}
+
+/*还原按钮*/
+QPushButton#ButtonRestore
+{
+    border-image:url(:/Resources/MyTitle/restore.png) 0 81 0 0 ;
+}
+
+QPushButton#ButtonRestore:hover
+{
+    border-image:url(:/Resources/MyTitle/restore.png) 0 54 0 27 ;
+}
+
+QPushButton#ButtonRestore:pressed
+{
+    border-image:url(:/Resources/MyTitle/restore.png) 0 27 0 54 ;
+}
+
+/*关闭按钮*/
+QPushButton#ButtonClose
+{
+    border-image:url(:/Resources/MyTitle/close.png) 0 81 0 0 ;
+    border-top-right-radius:3 ;
+}
+
+QPushButton#ButtonClose:hover
+{
+    border-image:url(:/Resources/MyTitle/close.png) 0 54 0 27 ;
+    border-top-right-radius:3 ;
+}
+
+QPushButton#ButtonClose:pressed
+{
+    border-image:url(:/Resources/MyTitle/close.png) 0 27 0 54 ;
+    border-top-right-radius:3 ;
+}
+QWidget#myBar{
+background-color: rgb(153, 153, 153);
+}</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="2">
+        <widget class="QPushButton" name="ButtonMax">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>30</horstretch>
+           <verstretch>30</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="ButtonMin">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>30</horstretch>
+           <verstretch>30</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="ButtonClose">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>30</horstretch>
+           <verstretch>30</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <widget class="QCalendarWidget" name="calendarWidget"/>
     </item>
    </layout>
@@ -44,7 +182,7 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="customtitle.qrc"/>
+  <include location="../../../../OpenSource/CustomTitleDemoV1.0/CustomTitleDemoV1.0/CustomTitle/customtitle.qrc"/>
  </resources>
  <connections/>
 </ui>

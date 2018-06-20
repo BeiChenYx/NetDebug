@@ -24,7 +24,7 @@ class MyTitleBar(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super(MyTitleBar, self).__init__(parent)
-        self.setupUi(self)
+        # self.setupUi(self)
 
         # 标题栏图标
         self.m_pIcon = QtWidgets.QLabel()
@@ -59,7 +59,7 @@ class MyTitleBar(QtWidgets.QWidget):
         self.m_titleContent = ''
 
         # 按钮类型
-        self.m_buttonType = ButtonType()
+        self.m_buttonType = ButtonType(2)
 
         # 标题栏中的标题滚动的位置
         self._nPos = 0
@@ -145,7 +145,7 @@ class MyTitleBar(QtWidgets.QWidget):
         pathBack = QtGui.QPainterPath()
         pathBack.setFillRule(QtCore.Qt.WindingFill)
         pathBack.addRoundedRect(
-            QtCore.QRect(0, 0, self.width(), self.height()),
+            QtCore.QRectF(0, 0, self.width(), self.height()),
             3, 3
         )
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
@@ -155,11 +155,13 @@ class MyTitleBar(QtWidgets.QWidget):
                 self.m_colorR, self.m_colorG, self.m_colorB
             ))
         )
+        # print(self.width())
+        # print(self.parentWidget().width()) 
         # 当窗口最大化或者还原后，窗口长度变了，标题的长度应该一起改变
         if self.width() != self.parentWidget().width():
             self.setFixedWidth(self.parentWidget().width())
 
-        return QtWidgets.QWidget.paintEvent(event)
+        # return QtWidgets.QWidget.paintEvent(event)
 
     def mouseDoubleClickEvent(self, event):
         """
@@ -173,7 +175,8 @@ class MyTitleBar(QtWidgets.QWidget):
             else:
                 self.onButtonRestoreClicked()
 
-        return QtWidgets.QWidget.mouseDoubleClickEvent(event)
+        # return QtWidgets.QWidget.mouseDoubleClickEvent(event)
+        event.accept()
 
     def mousePressClickEvent(self, event):
         """
@@ -188,7 +191,8 @@ class MyTitleBar(QtWidgets.QWidget):
         else:
             self.m_isPressed = True
             self.m_startMovePos = event.globalPos()
-        return QtWidgets.QWidget.mousePressEvent()
+        # return QtWidgets.QWidget.mousePressEvent()
+        event.accept()
 
     def mouseMoveEvent(self, event):
         """
@@ -203,7 +207,9 @@ class MyTitleBar(QtWidgets.QWidget):
                 widgetPos.x() + movePoint.x(),
                 widgetPos.y() + movePoint.y()
             )
-        return QtWidgets.QWidget.mouseMoveEvent(event)
+            print(widgetPos.x() + movePoint.x())
+        # return QtWidgets.QWidget.mouseMoveEvent(event)
+        event.accept()
 
     def mouseReleaseEvent(self, event):
         """
@@ -211,7 +217,9 @@ class MyTitleBar(QtWidgets.QWidget):
         三个事件来实现鼠标拖动标题栏移动窗口的效果
         """
         self.m_isPressed = False
-        return QtWidgets.QWidget.mouseReleaseEvent(event)
+        print('release')
+        # return QtWidgets.QWidget.mouseReleaseEvent(event)
+        event.accept()
 
     def initControl(self):
         """
@@ -303,12 +311,25 @@ class MyTitleBar(QtWidgets.QWidget):
         """
         让标题栏中的标题显示为滚动的效果
         """
-        titleContent = self.m_titleContent
-        if self._nPos > len(titleContent):
-            self._nPos = 0
-        
-        self.m_pTitleContent.setText(
-            titleContent.mid(self._nPos)
-        )
-        self._nPos += 1
+        try:
+            titleContent = self.m_titleContent
+            if self._nPos > len(titleContent):
+                self._nPos = 0
+            
+            self.m_pTitleContent.setText(
+                titleContent[self._nPos:]
+            )
+            self._nPos += 1
+        except Exception as err:
+            print(err)
 
+
+if __name__ == '__main__':
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    # widget = QtWidgets.QMainWindow()
+    widget = QtWidgets.QWidget()
+    ui = MyTitleBar()
+    # ui.setupUi(widget)
+    ui.show()
+    sys.exit(app.exec_())

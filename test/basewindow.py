@@ -7,8 +7,8 @@ class BaseWindow(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super(BaseWindow, self).__init__(parent)
-        self.setupUi(self)
-        self.m_titleBar = MyTitleBar()
+        # self.setupUi(self)
+        self.m_titleBar = MyTitleBar(self)
 
         self.setWindowFlags(
             (QtCore.Qt.FramelessWindowHint | 
@@ -39,7 +39,7 @@ class BaseWindow(QtWidgets.QWidget):
         pathBack = QtGui.QPainterPath()
         pathBack.setFillRule(QtCore.Qt.WindingFill)
         pathBack.addRoundedRect(
-            QtCore.QRect(0, 0, self.width(), self.height()),
+            QtCore.QRectF(0, 0, self.width(), self.height()),
             3, 3
         )
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
@@ -48,7 +48,7 @@ class BaseWindow(QtWidgets.QWidget):
             QtGui.QBrush(QtGui.QColor( 238, 223, 204))
         )
 
-        return QtWidgets.QWidget.paintEvent(event)
+        # return QtWidgets.QWidget.paintEvent(event)
     
     def loadStyleSheet(self, sheetName):
         """
@@ -87,3 +87,14 @@ class BaseWindow(QtWidgets.QWidget):
 
     def onButtonCloseClicked(self):
         self.close()
+
+
+if __name__ == '__main__':
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    # widget = QtWidgets.QMainWindow()
+    widget = QtWidgets.QWidget()
+    ui = BaseWindow()
+    # ui.setupUi(widget)
+    ui.show()
+    sys.exit(app.exec_())
