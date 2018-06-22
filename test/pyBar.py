@@ -181,7 +181,7 @@ class QUnFrameWindow(QWidget):
                              for y in range(self.height() - self._padding, self.height() + 1)]
         self._corner_rect = [QPoint(x, y) for x in range(self.width() - self._padding, self.width() + 1)
                              for y in range(self.height() - self._padding, self.height() + 1)]
-        self._left_drag_rect = [QPoint(x, y) for x in range(self._padding) 
+        self._left_drag_rect = [QPoint(x, y) for x in range(1, self._padding) 
                                 for y in range(1, self.height() - self._padding)]
 
     def mousePressEvent(self, event):
@@ -226,11 +226,12 @@ class QUnFrameWindow(QWidget):
             self.resize(QMouseEvent.pos().x(), self.height())
             QMouseEvent.accept()
         elif Qt.LeftButton and self._left_drag:
-            # self.resize(self.width() - QMouseEvent.pos().x(), self.height())
-            if self.width() > self._minWidth:
-                self.move(QMouseEvent.globalPos().x(), self.pos().y())
-                QMouseEvent.accept()
+            oldx = self.x()
+            offsetMouseX = QMouseEvent.pos().x()
             self.resize(self.width() - QMouseEvent.pos().x(), self.height())
+            if self.width() > self._minWidth:
+                self.move(oldx + offsetMouseX, self.y())
+            QMouseEvent.accept()
         elif Qt.LeftButton and self._bottom_drag:
             # 下侧调整窗口高度
             self.resize(self.width(), QMouseEvent.pos().y())
