@@ -56,14 +56,12 @@ class MyUICustomerBar(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
-            print('press m_flag: ', self.m_flag)
             self.m_flag = True
             self.m_Position = event.globalPos() - self.pos()
             event.accept()
-            # self.setCursor(QtGui.QCursor(QtCore.Qt.OpenHandCursor))
 
     def mouseMoveEvent(self, event):
-        print('m_flag: ', self.m_flag)
+        print('myBar: ', self.myBar.pos())
         if QtCore.Qt.LeftButton and self.m_flag:
             print('m_Position: ', self.m_Position)
             self.move(event.globalPos() - self.m_Position)
@@ -71,7 +69,6 @@ class MyUICustomerBar(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def mouseReleaseEvent(self, event):
         self.m_flag = False
-        # self.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
 
 
 if __name__ == '__main__':
