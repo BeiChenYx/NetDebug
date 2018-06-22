@@ -1,0 +1,37 @@
+
+/**********Title**********/
+margin: 0px;
+padding: 0px;
+QTitleLabel {
+    background-color: Gainsboro;
+    font: 100 10pt;
+}
+
+/**********Button**********/
+
+QTitleButton {
+    background-color: rgba(255, 255, 255, 0);
+    color: black;
+    border: 0px;
+    font: 100 10pt;
+}
+
+QTitleButton#MinMaxButton:hover {
+    background-color: #D0D0D1;
+    border: 0px;
+    font: 100 10pt;
+}
+
+QTitleButton#CloseButton:hover {
+    background-color: #D32424;
+    color: white;
+    border: 0px;
+    font: 100 10pt;
+}
+QWidget#SideWidget {
+    background-color: rgb(42, 45, 50);
+    /* background-color: #D0D0D1; */
+    border: 0px;
+    margin: 0;
+    padding: 0;
+}
