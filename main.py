@@ -28,6 +28,7 @@ class QTitleButton(QtWidgets.QPushButton):
         # 特殊字体以不借助图片实现最小化最大化和关闭按钮
         self.setFont(QtGui.QFont("Webdings"))  
         self.setFixedWidth(40)
+        self.setFixedHeight(20)
 
     
 class NetDebugMain(QtWidgets.QWidget):
@@ -39,19 +40,40 @@ class NetDebugMain(QtWidgets.QWidget):
         # 设置为顶级窗口，无边框
         super(NetDebugMain, self).__init__(
             None, QtCore.Qt.FramelessWindowHint)  
-        # 设置边界宽度为5
+        self.setObjectName('main')
+        # 设置边界宽度
         self._padding = 5  
-        self._minWidth = 500
-        self._minHeight = 500
+        self._minWidth = 700
+        self._minHeight = 600
         self.setMinimumSize(QtCore.QSize(
             self._minWidth, self._minHeight)
         )
+        self.setMouseTracking(True)
         self.init_ui()
+        self.init_connections()
         self.resize(self._minWidth, self._minHeight)
+        self.initDrag()
         
         with open("./NetDebug.qss", 'r', encoding='gbk') as fi:
             sheet = fi.read()
             self.setStyleSheet(sheet)
+
+    def initDrag(self):
+        # 设置鼠标跟踪判断扳机默认值
+        self._move_drag = False
+        self._corner_drag = False
+        self._bottom_drag = False
+        self._right_drag = False
+        self._left_drag = False
+        self._top_drag = False
+        self._top_right_corner_drag = False
+        self._top_left_corner_drag = False
+        self._bottom_left_corner_drag = False
+
+    def init_connections(self):
+        self._min_button.clicked.connect(self.showMinimized)
+        self._max_button.clicked.connect(self._changeNormalButton)
+        self._close_button.clicked.connect(self.close)
 
     def init_ui(self):
         self.init_top_bar()
@@ -60,10 +82,14 @@ class NetDebugMain(QtWidgets.QWidget):
         self._right_vlayout = QtWidgets.QVBoxLayout()
         self._right_vlayout.addLayout(self._top_bar_hlayout)
         self._right_vlayout.addWidget(self._main_widget)
+        self._right_vlayout.setSpacing(0)
+        self._right_vlayout.setContentsMargins(0, 0, 0, 0)
 
         self._main_Hlayout = QtWidgets.QHBoxLayout(self)
         self._main_Hlayout.addWidget(self._side_widget)
         self._main_Hlayout.addLayout(self._right_vlayout)
+        self._main_Hlayout.setSpacing(0)
+        self._main_Hlayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._main_Hlayout)
         
 
@@ -85,17 +111,18 @@ class NetDebugMain(QtWidgets.QWidget):
         self._top_bar_hlayout.addWidget(self._max_button)
         self._top_bar_hlayout.addWidget(self._close_button)
         self._top_bar_hlayout.setSpacing(0)
+        self._top_bar_hlayout.setContentsMargins(0, 0, 0, 0)
 
         self._min_button.setMouseTracking(True)
         self._max_button.setMouseTracking(True)
         self._close_button.setMouseTracking(True)
 
-        self._close_button.clicked.connect(self.close)
-
     def init_side_bar(self):
         """
         添加侧边栏
         """
+        self._title_img = QtWidgets.QLabel('img')
+        self._title_img.setObjectName('TitleImg')
         self._tcp_sever_button = QtWidgets.QPushButton('TS')
         self._tcp_clients_button = QtWidgets.QPushButton('TC')
         self._udp_sever_button = QtWidgets.QPushButton('US')
@@ -103,13 +130,15 @@ class NetDebugMain(QtWidgets.QWidget):
         self._help_button = QtWidgets.QPushButton('Help')
         self._set_button = QtWidgets.QPushButton('Set')
 
-        self._tcp_sever_button.setFixedSize(QtCore.QSize(40, 40))
-        self._tcp_clients_button.setFixedSize(QtCore.QSize(40, 40))
-        self._udp_sever_button.setFixedSize(QtCore.QSize(40, 40))
-        self._udp_clients_button.setFixedSize(QtCore.QSize(40, 40))
-        self._help_button.setFixedSize(QtCore.QSize(40, 40))
-        self._set_button.setFixedSize(QtCore.QSize(40, 40))
+        self._title_img.setFixedWidth(32)
+        self._tcp_sever_button.setFixedSize(QtCore.QSize(32, 32))
+        self._tcp_clients_button.setFixedSize(QtCore.QSize(32, 32))
+        self._udp_sever_button.setFixedSize(QtCore.QSize(32, 32))
+        self._udp_clients_button.setFixedSize(QtCore.QSize(32, 32))
+        self._help_button.setFixedSize(QtCore.QSize(32, 32))
+        self._set_button.setFixedSize(QtCore.QSize(32, 32))
 
+        self._title_img.setMouseTracking(True)
         self._tcp_sever_button.setMouseTracking(True)
         self._tcp_clients_button.setMouseTracking(True)
         self._udp_sever_button.setMouseTracking(True)
@@ -117,19 +146,140 @@ class NetDebugMain(QtWidgets.QWidget):
         self._help_button.setMouseTracking(True)
         self._set_button.setMouseTracking(True)
 
+        self._img = QtGui.QImage()
+        if self._img.load('./images/ico.png'):
+            self._title_img.setPixmap(QtGui.QPixmap.fromImage(self._img))
+        self._title_img.setScaledContents(True)
+
         self._side_widget = QtWidgets.QWidget()
         self._side_widget.setObjectName('SideWidget')
         self._side_bar_Vlayout = QtWidgets.QVBoxLayout()
+        self._side_bar_Vlayout.addWidget(self._title_img)
         self._side_bar_Vlayout.addWidget(self._tcp_sever_button)
         self._side_bar_Vlayout.addWidget(self._tcp_clients_button)
         self._side_bar_Vlayout.addWidget(self._udp_sever_button)
         self._side_bar_Vlayout.addWidget(self._udp_clients_button)
-        self._side_bar_Vlayout.addStretch()
         self._side_bar_Vlayout.addWidget(self._help_button)
+        self._side_bar_Vlayout.addStretch()
         self._side_bar_Vlayout.addWidget(self._set_button)
-        self._side_bar_Vlayout.setSpacing(0)
-        self._side_widget.setLayout(self._side_bar_Vlayout)
+        self._side_bar_Vlayout.setSpacing(25)
+        self._side_bar_Vlayout.setContentsMargins(0, 10, 0, 0)
+        self._side_widget.setFixedWidth(60)
+        self._side_bar_HlayOut = QtWidgets.QHBoxLayout()
+        self._side_bar_HlayOut.addLayout(self._side_bar_Vlayout)
+        self._side_widget.setLayout(self._side_bar_HlayOut)
 
+    def _changeNormalButton(self):
+        # 切换到恢复窗口大小按钮
+        try:
+            self.showMaximized()  # 先实现窗口最大化
+            self._max_button.setText(
+                b'\xef\x80\xb2'.decode("utf-8"))  # 更改按钮文本
+            self._max_button.setToolTip("恢复")  # 更改按钮提示
+            self._max_button.disconnect()  # 断开原本的信号槽连接
+            self._max_button.clicked.connect(
+                self._changeMaxButton)  # 重新连接信号和槽
+        except:
+            pass
+
+    def _changeMaxButton(self):
+        # 切换到最大化按钮
+        try:
+            self.showNormal()
+            self._max_button.setText(b'\xef\x80\xb1'.decode("utf-8"))
+            self._max_button.setToolTip("最大化")
+            self._max_button.disconnect()
+            self._max_button.clicked.connect(self._changeNormalButton)
+        except:
+            pass
+
+    def resizeEvent(self, event):
+        """
+        自定义窗口调整大小的事件
+        """
+        # self._right_rect = [QtCore.QPoint(x, y) 
+        #     for x in  range(self.x() + self.width() - self._padding, self.x() + self.width())
+        #         for y in range(self.y() + self._padding, self.y() + self.height() - self._padding)
+        # ]
+        self._right_rect = [QtCore.QPoint(x, y) for x in range(self.width() - self._padding, self.width() + 1)
+            for y in range(1, self.height() - self._padding)
+        ]
+        self._bottom_rect = [QtCore.QPoint(x, y) for x in range(1, self.width() - self._padding)
+                             for y in range(self.height() - self._padding, self.height() + 1)]
+        self._corner_rect = [QtCore.QPoint(x, y) for x in range(self.width() - self._padding, self.width() + 1)
+                             for y in range(self.height() - self._padding, self.height() + 1)]
+        self._left_drag_rect = [QtCore.QPoint(x, y) for x in range(1, self._padding) 
+                                for y in range(1, self.height() - self._padding)]
+    
+    def mousePressEvent(self, event):
+        if (event.button() == QtCore.Qt.LeftButton) and (event.pos() in self._corner_rect):
+            # 鼠标左键点击右下角边界区域
+            self._corner_drag = True
+            event.accept()
+        elif (event.button() == QtCore.Qt.LeftButton) and (event.pos() in self._right_rect):
+            # 鼠标左键点击右侧边界区域
+            self._right_drag = True
+            event.accept()
+        elif (event.button() == QtCore.Qt.LeftButton) and (event.pos() in self._bottom_rect):
+            # 鼠标左键点击下侧边界区域
+            self._bottom_drag = True
+            event.accept()
+        elif (event.button() == QtCore.Qt.LeftButton) and (event.pos() in self._left_drag_rect):
+            self._left_drag = True
+            event.accept()
+        elif (event.button() == QtCore.Qt.LeftButton) and (event.y() < self._min_button.height()):
+            # 鼠标左键点击标题栏区域
+            self._move_drag = True
+            self.move_DragPosition = event.globalPos() - self.pos()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if event.pos() in self._corner_rect:
+            self.setCursor(QtCore.Qt.SizeFDiagCursor)
+        elif event.pos() in self._bottom_rect:
+            self.setCursor(QtCore.Qt.SizeVerCursor)
+        elif event.pos() in self._right_rect:
+            self.setCursor(QtCore.Qt.SizeHorCursor)
+        elif event.pos() in self._left_drag_rect:
+            self.setCursor(QtCore.Qt.SizeHorCursor)
+        else:
+            self.setCursor(QtCore.Qt.ArrowCursor)
+
+        if QtCore.Qt.LeftButton and self._right_drag:
+            # 右侧调整窗口宽度
+            self.resize(event.pos().x(), self.height())
+            event.accept()
+        elif QtCore.Qt.LeftButton and self._left_drag:
+            oldx = self.x()
+            offsetMouseX = event.pos().x()
+            self.resize(self.width() - event.pos().x(), self.height())
+            if self.width() > self._minWidth:
+                self.move(oldx + offsetMouseX, self.y())
+            event.accept()
+        elif QtCore.Qt.LeftButton and self._bottom_drag:
+            # 下侧调整窗口高度
+            self.resize(self.width(), event.pos().y())
+            event.accept()
+        elif QtCore.Qt.LeftButton and self._corner_drag:
+            # 右下角同时调整高度和宽度
+            self.resize(event.pos().x(), event.pos().y())
+            event.accept()
+        elif QtCore.Qt.LeftButton and self._move_drag:
+            # 标题栏拖放窗口位置
+            self.move(event.globalPos() - self.move_DragPosition)
+            event.accept()
+
+    def mouseReleaseEvent(self, event):
+        # 鼠标释放后，各扳机复位
+        self._move_drag = False
+        self._corner_drag = False
+        self._bottom_drag = False
+        self._right_drag = False
+        self._left_drag = False
+        self._top_drag = False
+        self._top_left_corner_drag = False
+        self._top_right_corner_drag = False
+        self._bottom_left_corner_drag = False
 
 
 if __name__ == '__main__':

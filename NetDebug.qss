@@ -1,7 +1,9 @@
 
 /**********Title**********/
-margin: 0px;
-padding: 0px;
+QWidget#main{
+    margin: 0px;
+    padding: 0px;
+}
 QTitleLabel {
     background-color: Gainsboro;
     font: 100 10pt;
@@ -32,6 +34,6 @@ QWidget#SideWidget {
     background-color: rgb(42, 45, 50);
     /* background-color: #D0D0D1; */
     border: 0px;
-    margin: 0;
-    padding: 0;
+    margin: 0px 0px 0px 0px;
+    padding: 40px 0px 0px 0px;
 }
