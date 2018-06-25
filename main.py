@@ -1,3 +1,6 @@
+import configparser
+
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -36,6 +39,8 @@ class NetDebugMain(QtWidgets.QWidget):
     无边框窗口类
     """
 
+    index_button = QtCore.pyqtSignal(int)
+
     def __init__(self):
         # 设置为顶级窗口，无边框
         super(NetDebugMain, self).__init__(
@@ -49,14 +54,19 @@ class NetDebugMain(QtWidgets.QWidget):
             self._minWidth, self._minHeight)
         )
         self.setMouseTracking(True)
+        self._config_path = './NetDebug.ini'
         self.init_ui()
         self.init_connections()
         self.resize(self._minWidth, self._minHeight)
         self.initDrag()
+        self.initConfig()
         
         with open("./NetDebug.qss", 'r', encoding='gbk') as fi:
             sheet = fi.read()
             self.setStyleSheet(sheet)
+        
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.on_timer_out)
 
     def initDrag(self):
         # 设置鼠标跟踪判断扳机默认值
@@ -75,13 +85,45 @@ class NetDebugMain(QtWidgets.QWidget):
         self._max_button.clicked.connect(self._changeNormalButton)
         self._close_button.clicked.connect(self.close)
 
+        # 添加功能页面信号槽
+        self.tcp_server.status_signal.connect(
+            self.status_show
+        )
+        self.tcp_clients.status_signal.connect(
+            self.status_show
+        )
+        self.udp_server.status_signal.connect(
+            self.status_show
+        )
+        self.udp_clients.status_signal.connect(
+            self.status_show
+        )
+        self.index_button.connect(self._main_widget.setCurrentIndex)
+        self._tcp_sever_button.clicked.connect(self.on_tcp_server_button)
+        self._tcp_clients_button.clicked.connect(self.on_tcp_clients_button)
+        self._udp_sever_button.clicked.connect(self.on_udp_server_button)
+        self._udp_clients_button.clicked.connect(self.on_udp_clients_button)
+    
+    def on_tcp_server_button(self):
+        self.index_button.emit(self._index_widget[self.tcp_server])
+    def on_tcp_clients_button(self):
+        self.index_button.emit(self._index_widget[self.tcp_clients])
+    def on_udp_server_button(self):
+        self.index_button.emit(self._index_widget[self.udp_server])
+    def on_udp_clients_button(self):
+        self.index_button.emit(self._index_widget[self.udp_clients])
+
     def init_ui(self):
         self.init_top_bar()
         self.init_side_bar()
-        self._main_widget = QtWidgets.QWidget(self)
+        self._main_widget = QtWidgets.QStackedWidget(self)
         self._right_vlayout = QtWidgets.QVBoxLayout()
         self._right_vlayout.addLayout(self._top_bar_hlayout)
         self._right_vlayout.addWidget(self._main_widget)
+        self._status_label = QtWidgets.QLabel(self)
+        self._status_label.setIndent(10)
+        self._status_label.setMinimumHeight(16)
+        self._right_vlayout.addWidget(self._status_label)
         self._right_vlayout.setSpacing(0)
         self._right_vlayout.setContentsMargins(0, 0, 0, 0)
 
@@ -91,6 +133,22 @@ class NetDebugMain(QtWidgets.QWidget):
         self._main_Hlayout.setSpacing(0)
         self._main_Hlayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self._main_Hlayout)
+        
+        self.tcp_server = TcpServer(self)
+        self.tcp_clients = TcpClients(self)
+        self.udp_server = UdpServer(self)
+        self.udp_clients = UdpClients(self)
+        self._index_widget = {
+            self.tcp_server: 0,
+            self.tcp_clients: 1,
+            self.udp_server: 2,
+            self.udp_clients: 3,
+        }
+
+        self._main_widget.addWidget(self.tcp_server)
+        self._main_widget.addWidget(self.tcp_clients)
+        self._main_widget.addWidget(self.udp_server)
+        self._main_widget.addWidget(self.udp_clients)
         
 
     def init_top_bar(self):
@@ -280,6 +338,35 @@ class NetDebugMain(QtWidgets.QWidget):
         self._top_left_corner_drag = False
         self._top_right_corner_drag = False
         self._bottom_left_corner_drag = False
+
+    def closeEvent(self, event):
+        self.update_config()
+        event.accept()
+
+    def initConfig(self):
+        self.tcp_server.initConfig()
+        self.tcp_clients.initConfig()
+        self.udp_server.initConfig()
+        self.udp_clients.initConfig()
+
+    def update_config(self):
+        config = configparser.ConfigParser()
+        config['TCPServer'] = self.tcp_server.update_config()
+        config['TCPClients'] = self.tcp_clients.update_config()
+        config['UDPServer'] = self.udp_server.update_config()
+        config['UDPClients'] = self.udp_clients.update_config()
+
+        with open(self._config_path, 'w', encoding='utf-8') as fi:
+            config.write(fi)
+
+    def status_show(self, msg):
+        self._status_label.setText(msg)
+        self.timer.start(5000)
+
+    def on_timer_out(self):
+        self._status_label.clear()
+        self.timer.stop()
+
 
 
 if __name__ == '__main__':
