@@ -188,6 +188,13 @@ class NetDebugMain(QtWidgets.QWidget):
         self._help_button = QtWidgets.QPushButton('Help')
         self._set_button = QtWidgets.QPushButton('Set')
 
+        self._tcp_sever_button.setToolTip('TCP服务器')
+        self._tcp_clients_button.setToolTip('TCP客户端')
+        self._udp_sever_button.setToolTip('UDP服务器')
+        self._udp_clients_button.setToolTip('UDP客户端')
+        self._help_button.setToolTip('帮助')
+        self._set_button.setToolTip('设置')
+
         self._title_img.setFixedWidth(32)
         self._tcp_sever_button.setFixedSize(QtCore.QSize(32, 32))
         self._tcp_clients_button.setFixedSize(QtCore.QSize(32, 32))
