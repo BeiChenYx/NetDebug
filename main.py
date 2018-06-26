@@ -192,12 +192,23 @@ class NetDebugMain(QtWidgets.QWidget):
         """
         self._title_img = QtWidgets.QLabel('img')
         self._title_img.setObjectName('TitleImg')
-        self._tcp_sever_button = QtWidgets.QPushButton('TS')
-        self._tcp_clients_button = QtWidgets.QPushButton('TC')
-        self._udp_sever_button = QtWidgets.QPushButton('US')
-        self._udp_clients_button = QtWidgets.QPushButton('UC')
-        self._help_button = QtWidgets.QPushButton('Help')
-        self._about_button = QtWidgets.QPushButton('About')
+        self._tcp_sever_button = QtWidgets.QPushButton()
+        self._tcp_sever_button.setObjectName('TSButton')
+
+        self._tcp_clients_button = QtWidgets.QPushButton()
+        self._tcp_clients_button.setObjectName('TCButton')
+
+        self._udp_sever_button = QtWidgets.QPushButton()
+        self._udp_sever_button.setObjectName('USButton')
+
+        self._udp_clients_button = QtWidgets.QPushButton()
+        self._udp_clients_button.setObjectName('UCButton')
+
+        self._help_button = QtWidgets.QPushButton()
+        self._help_button.setObjectName('HelpButton')
+
+        self._about_button = QtWidgets.QPushButton()
+        self._about_button.setObjectName('AboutButton')
 
         self._tcp_sever_button.setToolTip('TCP服务器')
         self._tcp_clients_button.setToolTip('TCP客户端')
@@ -225,7 +236,7 @@ class NetDebugMain(QtWidgets.QWidget):
         self._img = QtGui.QImage()
         if self._img.load('./images/ico.png'):
             self._title_img.setPixmap(QtGui.QPixmap.fromImage(self._img))
-        self._title_img.setScaledContents(True)
+            self._title_img.setScaledContents(True)
 
         self._side_widget = QtWidgets.QWidget()
         self._side_widget.setObjectName('SideWidget')

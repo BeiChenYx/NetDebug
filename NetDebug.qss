@@ -37,3 +37,135 @@ QWidget#SideWidget {
     margin: 0px 0px 0px 0px;
     padding: 40px 0px 0px 0px;
 }
+QPushButton#TSButton{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/TS_1.png);
+}
+QPushButton#TSButton:hover{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/TS_2.png);
+}
+QPushButton#TSButton:pressed{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/TS_4.png);
+}
+QPushButton#TCButton{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/TC_1.png);
+}
+QPushButton#TCButton:hover{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/TC_2.png);
+}
+QPushButton#TCButton:pressed{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/TC_4.png);
+}
+
+
+QPushButton#USButton{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/US_1.png);
+}
+QPushButton#USButton:hover{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/US_2.png);
+}
+QPushButton#USButton:pressed{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/US_4.png);
+}
+
+
+QPushButton#UCButton{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/UC_1.png);
+}
+QPushButton#UCButton:hover{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/UC_2.png);
+}
+QPushButton#UCButton:pressed{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/US_4.png);
+}
+
+QPushButton#HelpButton{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/help_1.png);
+}
+QPushButton#HelpButton:hover{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/help_2.png);
+}
+QPushButton#HelpButton:pressed{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/help_4.png);
+}
+
+QPushButton#AboutButton{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/set_1.png);
+}
+QPushButton#HelpButton:hover{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/set_2.png);
+}
+QPushButton#HelpButton:pressed{
+    background-color: rgb(42, 45, 50);
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    border-image: url(./images/set_4.png);
+}
