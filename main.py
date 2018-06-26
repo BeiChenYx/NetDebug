@@ -105,6 +105,8 @@ class NetDebugMain(QtWidgets.QWidget):
         self._udp_sever_button.clicked.connect(self.on_udp_server_button)
         self._udp_clients_button.clicked.connect(self.on_udp_clients_button)
         self._help_button.clicked.connect(self.on_help_button)
+        self._about_button.clicked.connect(self.on_about_button)
+
     
     def on_tcp_server_button(self):
         self.index_button.emit(self._index_widget[self.tcp_server])
@@ -116,6 +118,8 @@ class NetDebugMain(QtWidgets.QWidget):
         self.index_button.emit(self._index_widget[self.udp_clients])
     def on_help_button(self):
         self.index_button.emit(self._index_widget[self.help])
+    def on_about_button(self):
+        QtWidgets.QMessageBox.about(self, '版本信息', '网络调试工具 V1.0.0')
 
     def init_ui(self):
         self.init_top_bar()
@@ -193,14 +197,14 @@ class NetDebugMain(QtWidgets.QWidget):
         self._udp_sever_button = QtWidgets.QPushButton('US')
         self._udp_clients_button = QtWidgets.QPushButton('UC')
         self._help_button = QtWidgets.QPushButton('Help')
-        self._set_button = QtWidgets.QPushButton('Set')
+        self._about_button = QtWidgets.QPushButton('About')
 
         self._tcp_sever_button.setToolTip('TCP服务器')
         self._tcp_clients_button.setToolTip('TCP客户端')
         self._udp_sever_button.setToolTip('UDP服务器')
         self._udp_clients_button.setToolTip('UDP客户端')
         self._help_button.setToolTip('帮助')
-        self._set_button.setToolTip('设置')
+        self._about_button.setToolTip('关于')
 
         self._title_img.setFixedWidth(32)
         self._tcp_sever_button.setFixedSize(QtCore.QSize(32, 32))
@@ -208,7 +212,7 @@ class NetDebugMain(QtWidgets.QWidget):
         self._udp_sever_button.setFixedSize(QtCore.QSize(32, 32))
         self._udp_clients_button.setFixedSize(QtCore.QSize(32, 32))
         self._help_button.setFixedSize(QtCore.QSize(32, 32))
-        self._set_button.setFixedSize(QtCore.QSize(32, 32))
+        self._about_button.setFixedSize(QtCore.QSize(32, 32))
 
         self._title_img.setMouseTracking(True)
         self._tcp_sever_button.setMouseTracking(True)
@@ -216,7 +220,7 @@ class NetDebugMain(QtWidgets.QWidget):
         self._udp_sever_button.setMouseTracking(True)
         self._udp_clients_button.setMouseTracking(True)
         self._help_button.setMouseTracking(True)
-        self._set_button.setMouseTracking(True)
+        self._about_button.setMouseTracking(True)
 
         self._img = QtGui.QImage()
         if self._img.load('./images/ico.png'):
@@ -233,7 +237,7 @@ class NetDebugMain(QtWidgets.QWidget):
         self._side_bar_Vlayout.addWidget(self._udp_clients_button)
         self._side_bar_Vlayout.addWidget(self._help_button)
         self._side_bar_Vlayout.addStretch()
-        self._side_bar_Vlayout.addWidget(self._set_button)
+        self._side_bar_Vlayout.addWidget(self._about_button)
         self._side_bar_Vlayout.setSpacing(25)
         self._side_bar_Vlayout.setContentsMargins(0, 10, 0, 0)
         self._side_widget.setFixedWidth(60)
