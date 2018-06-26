@@ -155,14 +155,14 @@ QPushButton#AboutButton{
     padding: 0px;
     border-image: url(./images/set_1.png);
 }
-QPushButton#HelpButton:hover{
+QPushButton#AboutButton:hover{
     background-color: rgb(42, 45, 50);
     border: 0px;
     margin: 0px;
     padding: 0px;
     border-image: url(./images/set_2.png);
 }
-QPushButton#HelpButton:pressed{
+QPushButton#AboutButton:pressed{
     background-color: rgb(42, 45, 50);
     border: 0px;
     margin: 0px;

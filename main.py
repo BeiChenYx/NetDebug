@@ -68,6 +68,7 @@ class NetDebugMain(QtWidgets.QWidget):
         
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.on_timer_out)
+        self._tcp_sever_button.setStyleSheet("background-color: rgb(74, 155, 49);")
 
     def initDrag(self):
         # 设置鼠标跟踪判断扳机默认值
@@ -106,7 +107,45 @@ class NetDebugMain(QtWidgets.QWidget):
         self._udp_clients_button.clicked.connect(self.on_udp_clients_button)
         self._help_button.clicked.connect(self.on_help_button)
         self._about_button.clicked.connect(self.on_about_button)
+        self._main_widget.currentChanged.connect(self.on_main_widget)
 
+    def on_main_widget(self, index):
+        if index == 0:
+            self._tcp_sever_button.setStyleSheet("background-color: rgb(74, 155, 49);")
+            self._tcp_clients_button.setStyleSheet('border-image: url(./images/TC_1.png);')
+            self._udp_sever_button.setStyleSheet('border-image: url(./images/US_1.png);')
+            self._udp_clients_button.setStyleSheet('border-image: url(./images/UC_1.png);')
+            self._help_button.setStyleSheet('border-image: url(./images/help_1.png);')
+        elif index == 1:
+            self._tcp_sever_button.setStyleSheet('border-image: url(./images/TS_1.png);')
+            self._tcp_clients_button.setStyleSheet("background-color: rgb(74, 155, 49);")
+            self._udp_sever_button.setStyleSheet('border-image: url(./images/US_1.png);')
+            self._udp_clients_button.setStyleSheet('border-image: url(./images/UC_1.png);')
+            self._help_button.setStyleSheet('border-image: url(./images/help_1.png);')
+        elif index == 2:
+            self._tcp_sever_button.setStyleSheet('border-image: url(./images/TS_1.png);')
+            self._tcp_clients_button.setStyleSheet('border-image: url(./images/TC_1.png);')
+            self._udp_sever_button.setStyleSheet("background-color: rgb(74, 155, 49);")
+            self._udp_clients_button.setStyleSheet('border-image: url(./images/UC_1.png);')
+            self._help_button.setStyleSheet('border-image: url(./images/help_1.png);')
+        elif index == 3:
+            self._tcp_sever_button.setStyleSheet('border-image: url(./images/TS_1.png);')
+            self._tcp_clients_button.setStyleSheet('border-image: url(./images/TC_1.png);')
+            self._udp_sever_button.setStyleSheet('border-image: url(./images/US_1.png);')
+            self._udp_clients_button.setStyleSheet("background-color: rgb(74, 155, 49);")
+            self._help_button.setStyleSheet('border-image: url(./images/help_1.png);')
+        elif index == 4:
+            self._tcp_sever_button.setStyleSheet('border-image: url(./images/TS_1.png);')
+            self._tcp_clients_button.setStyleSheet('border-image: url(./images/TC_1.png);')
+            self._udp_sever_button.setStyleSheet('border-image: url(./images/US_1.png);')
+            self._udp_clients_button.setStyleSheet('border-image: url(./images/UC_1.png);')
+            self._help_button.setStyleSheet("background-color: rgb(74, 155, 49);")
+        else:
+            self._tcp_sever_button.setStyleSheet('border-image: url(./images/TS_1.png);')
+            self._tcp_clients_button.setStyleSheet('border-image: url(./images/TC_1.png);')
+            self._udp_sever_button.setStyleSheet('border-image: url(./images/US_1.png);')
+            self._udp_clients_button.setStyleSheet('border-image: url(./images/UC_1.png);')
+            self._help_button.setStyleSheet('border-image: url(./images/help_1.png);')
     
     def on_tcp_server_button(self):
         self.index_button.emit(self._index_widget[self.tcp_server])
@@ -218,12 +257,14 @@ class NetDebugMain(QtWidgets.QWidget):
         self._about_button.setToolTip('关于')
 
         self._title_img.setFixedWidth(32)
-        self._tcp_sever_button.setFixedSize(QtCore.QSize(32, 32))
-        self._tcp_clients_button.setFixedSize(QtCore.QSize(32, 32))
-        self._udp_sever_button.setFixedSize(QtCore.QSize(32, 32))
-        self._udp_clients_button.setFixedSize(QtCore.QSize(32, 32))
-        self._help_button.setFixedSize(QtCore.QSize(32, 32))
-        self._about_button.setFixedSize(QtCore.QSize(32, 32))
+        self._button_width = 32
+        self._button_height = 32
+        self._tcp_sever_button.setFixedSize(QtCore.QSize(self._button_width, self._button_height))
+        self._tcp_clients_button.setFixedSize(QtCore.QSize(self._button_width, self._button_height))
+        self._udp_sever_button.setFixedSize(QtCore.QSize(self._button_width, self._button_height))
+        self._udp_clients_button.setFixedSize(QtCore.QSize(self._button_width, self._button_height))
+        self._help_button.setFixedSize(QtCore.QSize(self._button_width, self._button_height))
+        self._about_button.setFixedSize(QtCore.QSize(self._button_width, self._button_height))
 
         self._title_img.setMouseTracking(True)
         self._tcp_sever_button.setMouseTracking(True)
@@ -250,7 +291,7 @@ class NetDebugMain(QtWidgets.QWidget):
         self._side_bar_Vlayout.addStretch()
         self._side_bar_Vlayout.addWidget(self._about_button)
         self._side_bar_Vlayout.setSpacing(25)
-        self._side_bar_Vlayout.setContentsMargins(0, 10, 0, 0)
+        self._side_bar_Vlayout.setContentsMargins(0, 10, 0, 10)
         self._side_widget.setFixedWidth(60)
         self._side_bar_HlayOut = QtWidgets.QHBoxLayout()
         self._side_bar_HlayOut.addLayout(self._side_bar_Vlayout)
