@@ -136,6 +136,8 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
     def on_workData(self, msg):
         if self.checkBox_Pause.isChecked():
             return
+        if self.pushButton_Connect.text() == '连接':
+            return
         if len(self.textEdit.toPlainText()) > 4096:
             self.textEdit.clear()
         self.label_RX.setText(
@@ -167,8 +169,11 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
             4: clientThreadStart
             5: clientThreadClose
         """
-        cmd, message = msg.split('-')
-        self.handle_workStatus(int(cmd), message)
+        try:
+            cmd, message = msg.split('-')
+            self.handle_workStatus(int(cmd), message)
+        except Exception as err:
+            self.status_signal.emit(str(err))
 
     def handle_workStatus(self, cmd, msg):
         self.cmd_status_func_dict[cmd](msg)
@@ -205,6 +210,8 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
 
     def sendData(self, msg):
         try:
+            if self.pushButton_Connect.text() == '连接':
+                return
             self.tcp_clients.sendData(msg)
             self.label_TX.setText(
                 str(int(self.label_TX.text()) + len(msg))

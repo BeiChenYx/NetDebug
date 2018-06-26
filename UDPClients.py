@@ -138,6 +138,8 @@ class UdpClients(QtWidgets.QWidget, Ui_Form):
     def on_workData(self, data):
         if self.checkBox_Pause.isChecked():
             return
+        if self.pushButton_Connect.text() == '创建':
+            return
         if len(self.textEdit.toPlainText()) > 4096:
             self.textEdit.clear()
         self.label_RX.setText(
@@ -168,8 +170,11 @@ class UdpClients(QtWidgets.QWidget, Ui_Form):
             3: clientCreate          客户端创建完成
             4: clientClose           客户端关闭
         """
-        cmd, message = data.split('-')
-        self.handle_workStatus(int(cmd), message)
+        try:
+            cmd, message = data.split('-')
+            self.handle_workStatus(int(cmd), message)
+        except Exception as err:
+            self.status_signal.emit(str(err))
         
     def handle_workStatus(self, cmd, data):
         self.cmd_status_func_dict[cmd](data)
@@ -183,6 +188,8 @@ class UdpClients(QtWidgets.QWidget, Ui_Form):
 
     def sendData(self, data):
         try:
+            if self.pushButton_Connect.text() == '创建':
+                return
             self.udp_clients.sendData(data)
             self.label_TX.setText(
                 str(int(self.label_TX.text()) + len(data))

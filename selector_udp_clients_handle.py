@@ -48,22 +48,27 @@ class UdpClientsWorkThread(QtCore.QThread):
                 print(err)
 
         while True:
-            if len(self._clients) == 0 or self._exit:
+            try:
+                if len(self._clients) == 0 or self._exit:
+                    break
+                recvInput, sendOutput, _ = select.select(
+                    self._clients, self._clients, []
+                )
+
+                if len(recvInput) == 0 and self._queue.empty():
+                    QtCore.QThread.msleep(1)
+
+                if len(sendOutput):
+                    if not self._queue.empty():
+                        data = self._queue.get()
+                        for client in sendOutput:
+                            client.sendto(data, (self._ip, self._port))
+                            msg = "3-%s" % str(client.getsockname())
+                            self.statusSignal.emit(msg)
+            except Exception as err:
+                msg = "0-%s" % str(err)
+                self.statusSignal.emit(msg)
                 break
-            recvInput, sendOutput, _ = select.select(
-                self._clients, self._clients, []
-            )
-
-            if len(recvInput) == 0 and self._queue.empty():
-                QtCore.QThread.msleep(1)
-
-            if len(sendOutput):
-                if not self._queue.empty():
-                    data = self._queue.get()
-                    for client in sendOutput:
-                        client.sendto(data, (self._ip, self._port))
-                        msg = "3-%s" % str(client.getsockname())
-                        self.statusSignal.emit(msg)
 
             if len(recvInput):
                 for client in recvInput:
@@ -74,10 +79,10 @@ class UdpClientsWorkThread(QtCore.QThread):
                             self.dataSignal.emit(data)
                     except Exception as err:
                         msg = "0-%s" % str(err)
-                        msg = "4-%s" % str(client.getsockname())
+                        msgclient = "4-%s" % str(client.getsockname())
                         client.close()
                         self.statusSignal.emit(msg)
-                        self.statusSignal.emit(msg)
+                        self.statusSignal.emit(msgclient)
 
         count = len(self._clients)
         for i in range(count):

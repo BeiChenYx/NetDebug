@@ -124,6 +124,8 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
             self._clients.append(addr)
             self.update_listWidget()
             
+        if self.pushButton_Connect.text() == '连接':
+            return
         if self.checkBox_Pause_Display.isChecked():
             return
         if len(self.textEdit.toPlainText()) > 4096:
@@ -160,8 +162,11 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
                 )
 
     def on_workStatus(self, msg):
-        cmd, message = msg.split('-')
-        self.handle_workStatus(int(cmd), message)
+        try:
+            cmd, message = msg.split('-')
+            self.handle_workStatus(int(cmd), message)
+        except Exception as err:
+            self.status_signal.emit(str(err))
 
     def on_pushButton_Clear_display(self):
         self.textEdit.clear()
@@ -210,6 +215,8 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
 
     def sendData(self, msg):
         try:
+            if self.pushButton_Connect.text() == '连接':
+                return
             addr = self.get_listView_select_text()
             if addr != '':
                 self.udp_server.sendData(addr, msg)
@@ -225,7 +232,10 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
         return self.listWidget.currentItem().text()
 
     def save_file_name(self, data):
-        with open(
-            self.lineEdit_Recv_File_Path.text(), 'a', encoding='gbk'
-        ) as file:
-            file.write(data)
+        try:
+            with open(
+                self.lineEdit_Recv_File_Path.text(), 'a', encoding='gbk'
+            ) as file:
+                file.write(data)
+        except Exception as err:
+            self.status_signal.emit(str(err))
