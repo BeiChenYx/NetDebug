@@ -8,6 +8,7 @@ from TCPServer import TcpServer
 from TCPClients import TcpClients
 from UDPServer import UdpServer
 from UDPClients import UdpClients
+from help import Help
 
 
 class QTitleLabel(QtWidgets.QLabel):
@@ -103,6 +104,7 @@ class NetDebugMain(QtWidgets.QWidget):
         self._tcp_clients_button.clicked.connect(self.on_tcp_clients_button)
         self._udp_sever_button.clicked.connect(self.on_udp_server_button)
         self._udp_clients_button.clicked.connect(self.on_udp_clients_button)
+        self._help_button.clicked.connect(self.on_help_button)
     
     def on_tcp_server_button(self):
         self.index_button.emit(self._index_widget[self.tcp_server])
@@ -112,6 +114,8 @@ class NetDebugMain(QtWidgets.QWidget):
         self.index_button.emit(self._index_widget[self.udp_server])
     def on_udp_clients_button(self):
         self.index_button.emit(self._index_widget[self.udp_clients])
+    def on_help_button(self):
+        self.index_button.emit(self._index_widget[self.help])
 
     def init_ui(self):
         self.init_top_bar()
@@ -138,17 +142,20 @@ class NetDebugMain(QtWidgets.QWidget):
         self.tcp_clients = TcpClients(self)
         self.udp_server = UdpServer(self)
         self.udp_clients = UdpClients(self)
+        self.help = Help(self)
         self._index_widget = {
             self.tcp_server: 0,
             self.tcp_clients: 1,
             self.udp_server: 2,
             self.udp_clients: 3,
+            self.help: 4,
         }
 
         self._main_widget.addWidget(self.tcp_server)
         self._main_widget.addWidget(self.tcp_clients)
         self._main_widget.addWidget(self.udp_server)
         self._main_widget.addWidget(self.udp_clients)
+        self._main_widget.addWidget(self.help)
         
 
     def init_top_bar(self):
