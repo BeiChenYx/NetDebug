@@ -78,21 +78,33 @@ class TcpClientsWorkThread(QtCore.QThread):
                 if not self._queue.empty():
                     data = self._queue.get()
                     for client in sendOutput:
-                        client.send(data)
+                        try:
+                            client.send(data)
+                        except Exception as err:
+                            msg = "1-%s" % str(client.getsockname())
+                            client.close()
+                            self.statusSignal.emit(msg)
+                            self._clients.remove(client)
             
             if len(recvInput):
                 for client in recvInput:
-                    data = client.recv(1000)
-                    if data:
-                        self.dataSignal.emit(data)
-                    else:
+                    try:
+                        data = client.recv(1000)
+                        if data:
+                            self.dataSignal.emit(data)
+                        else:
+                            msg = "1-%s" % str(client.getsockname())
+                            client.close()
+                            self.statusSignal.emit(msg)
+                            self._clients.remove(client)
+                            if len(self._clients) == 0:
+                                break
+                    except Exception as err:
                         msg = "1-%s" % str(client.getsockname())
                         client.close()
                         self.statusSignal.emit(msg)
                         self._clients.remove(client)
-                        if len(self._clients) == 0:
-                            break
-                
+
         count = len(self._clients)
         for i in range(count):
             msg = "1-%s" % str(self._clients[i].getsockname())
