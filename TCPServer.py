@@ -100,6 +100,8 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
     
     def on_pushButton_Connect(self):
         if self.pushButton_Connect.text() == '连接':
+            if self.lineEdit_IP.text() == '' or self.lineEdit_Port.text() == '':
+                return
             self.tcp_server = TCPServerWorkThread(
                 self.lineEdit_IP.text(),
                 int(self.lineEdit_Port.text())
@@ -237,7 +239,8 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.label_RX.setText('0')
         self.label_TX.setText('0')
 
-    def on_to_file(self):
+    def on_to_file(self, state):
+        print('state: ', state)
         if self.checkBox_Recv_To_File.isChecked():
             file_name, _ = QtWidgets.QFileDialog.getSaveFileName(
                 self,
@@ -246,8 +249,9 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 'All Files (*);;Text Files (*.txt)'
             )
             if file_name == '':
-                self.checkBox_Recv_To_File.setChecked(False)
-            self.lineEdit_Recv_File_Path.setText(file_name)
+                self.checkBox_Recv_To_File.setCheckState(QtCore.Qt.Unchecked)
+            else:
+                self.lineEdit_Recv_File_Path.setText(file_name)
 
     def get_date_time(self):
         return time.strftime(' [%Y-%m-%d %H:%M:%S]\n', time.localtime())

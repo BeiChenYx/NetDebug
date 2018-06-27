@@ -123,7 +123,7 @@ QPushButton#UCButton:pressed{
     border: 0px;
     margin: 0px;
     padding: 0px;
-    border-image: url(./images/US_4.png);
+    border-image: url(./images/UC_4.png);
 }
 
 QPushButton#HelpButton{

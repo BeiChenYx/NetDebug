@@ -48,17 +48,27 @@ class TCPServerWorkThread(QtCore.QThread):
             self.statusSignal.emit(msg)
 
         def read(conn, mask):
-            self._mutx.lock()
-            data = conn.recv(1000)
-            if data:
-                self.dataSignal.emit(str(self._clients[conn]), data)
-            else:
+            try:
+                self._mutx.lock()
+                data = conn.recv(1000)
+                if data:
+                    self.dataSignal.emit(str(self._clients[conn]), data)
+                else:
+                    msg = "2-%s" % self._clients[conn]
+                    sel.unregister(conn)
+                    del self._clients[conn]
+                    conn.close()
+                    self.statusSignal.emit(msg)
+                self._mutx.unlock()
+            except Exception as err:
                 msg = "2-%s" % self._clients[conn]
                 sel.unregister(conn)
                 del self._clients[conn]
                 conn.close()
                 self.statusSignal.emit(msg)
-            self._mutx.unlock()
+                self._mutx.unlock()
+                self.statusSignal.emit('0-%s' % str(err))
+                print('****')
 
         try:
             sock = socket.socket()
@@ -79,9 +89,12 @@ class TCPServerWorkThread(QtCore.QThread):
                 # 因此在断开时使用一个本地client来触发
                 events = sel.select()
                 for key, mask in events:
-                    func = key.data
-                    obj = key.fileobj
-                    func(obj, mask)
+                    try:
+                        func = key.data
+                        obj = key.fileobj
+                        func(obj, mask)
+                    except Exception as err:
+                        self.statusSignal.emit('0-%s' % str(err))
 
             # 断开所有客户端连接
             [conn.close() for conn in self._clients]

@@ -103,6 +103,8 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
 
     def on_pushButton_Connect(self):
         if self.pushButton_Connect.text() == '连接':
+            if self.lineEdit_IP.text() == '' or self.lineEdit_Port.text() == '':
+                return
             self.udp_server = UDPServerWorkThread(
                 self.lineEdit_IP.text(),
                 int(self.lineEdit_Port.text())
@@ -183,7 +185,10 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
                 'c:/',
                 'All Files (*);;Text Files (*.txt)'
             )
-            self.lineEdit_Recv_File_Path.setText(file_name)
+            if file_name == '':
+                self.checkBox_Recv_To_File.setCheckState(QtCore.Qt.Unchecked)
+            else:
+                self.lineEdit_Recv_File_Path.setText(file_name)
 
     def info_status(self, msg):
         self.status_signal.emit(msg)
