@@ -114,6 +114,19 @@
          </widget>
         </item>
         <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QPushButton" name="pushButton_Clear_Recv">
           <property name="text">
            <string>清空显示</string>
@@ -181,14 +194,14 @@
      <item>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
-        <string>网络数据接收</string>
+        <string/>
        </property>
        <layout class="QGridLayout" name="gridLayout">
         <property name="leftMargin">
          <number>5</number>
         </property>
         <property name="topMargin">
-         <number>5</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
          <number>5</number>
@@ -199,8 +212,15 @@
         <property name="spacing">
          <number>0</number>
         </property>
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QTextEdit" name="textEdit"/>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>网络数据接收:</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

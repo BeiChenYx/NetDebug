@@ -169,3 +169,8 @@ QPushButton#AboutButton:pressed{
     padding: 0px;
     border-image: url(./images/set_4.png);
 }
+QGroupBox{
+    border: 0px;
+    padding: 10px 0px 0px 0px;
+    margin: 0px;
+}
