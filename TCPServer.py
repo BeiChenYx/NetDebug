@@ -9,7 +9,7 @@ from PyQt5 import QtGui
 from UI.ui_TCPServer import Ui_Form
 from Single import SingleSend
 from SendList import SendList
-from selector_handle import TCPServerWorkThread
+from aio_tcp_server import TCPServerWorkThread
 
 
 class TcpServer(QtWidgets.QWidget, Ui_Form):
