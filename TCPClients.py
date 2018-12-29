@@ -19,19 +19,19 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
     def __init__(self, parent):
         super(TcpClients, self).__init__(parent)
         self.setupUi(self)
-        self._config_path = './NetDebug.ini'
-        self.initUi()
-        self.initConnect()
+        # self._config_path = './NetDebug.ini'
+        # self.initUi()
+        # self.initConnect()
 
-        self.cmd_status_func_dict = {
-            0: self.clientConnect,
-            1: self.clientClose,
-            2: self.clientConnectErr,
-            3: self.info_status,
-            4: self.clientThreadStart,
-            5: self.clientThreadClose,
-        }
-        self._clients = list()
+        # self.cmd_status_func_dict = {
+            # 0: self.clientConnect,
+            # 1: self.clientClose,
+            # 2: self.clientConnectErr,
+            # 3: self.info_status,
+            # 4: self.clientThreadStart,
+            # 5: self.clientThreadClose,
+        # }
+        # self._clients = list()
 
     def initUi(self):
         self.tabWidget.clear()

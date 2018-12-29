@@ -11,7 +11,55 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>网络调试工具</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow
+{
+	margin: 0px;
+	padding: 0px;
+    background: #FFFFFF;
+}
+
+QListWidget
+{
+    color: black; 
+    background: #FFFFFF;
+    border-left: 0px solid gray;
+    border-bottom: 0px solid gray;
+    border-top: 0px solid gray;
+	border-right: 1px solid #D7DCE0;
+	padding-top: 6px;
+    outline:0px;
+}
+
+QListWidget::Item
+{
+    height: 40px;
+    border: 0px solid #FFFFFF;
+    padding-left: 12;
+}
+
+QListWidget::Item:hover
+{
+    color: #3DAAFD;
+    background: transparent;
+}
+
+QListWidget::Item:selected
+{
+    color: #3DAAFD;
+    background: #E7E7EB;
+    border-left: 5px solid #3DAAFD;
+}
+/*
+QListWidget::Item:selected:active
+{
+    background: #E7E7EB;
+    color:  #3DAAFD;
+    border-left:2px solid #3DAAFD;
+}*/
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="layoutDirection">
@@ -20,15 +68,12 @@
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <property name="spacing">
-     <number>0</number>
-    </property>
+   <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
      <number>0</number>
     </property>
     <property name="topMargin">
-     <number>5</number>
+     <number>0</number>
     </property>
     <property name="rightMargin">
      <number>0</number>
@@ -36,52 +81,73 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
-    <item>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="tabPosition">
-       <enum>QTabWidget::North</enum>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QListWidget" name="listWidget">
+      <property name="minimumSize">
+       <size>
+        <width>115</width>
+        <height>0</height>
+       </size>
       </property>
-      <property name="tabShape">
-       <enum>QTabWidget::Rounded</enum>
+      <property name="maximumSize">
+       <size>
+        <width>115</width>
+        <height>100000</height>
+       </size>
       </property>
-      <property name="documentMode">
-       <bool>false</bool>
-      </property>
-      <property name="tabsClosable">
-       <bool>false</bool>
-      </property>
-      <property name="movable">
-       <bool>false</bool>
-      </property>
-      <property name="tabBarAutoHide">
-       <bool>false</bool>
-      </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Tab 2</string>
-       </attribute>
-      </widget>
+      <item>
+       <property name="text">
+        <string>TCP服务器</string>
+       </property>
+       <property name="icon">
+        <iconset resource="img.qrc">
+         <normaloff>:/img/images/TS_3.png</normaloff>:/img/images/TS_3.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>TCP客户端</string>
+       </property>
+       <property name="icon">
+        <iconset resource="img.qrc">
+         <normaloff>:/img/images/TC_3.png</normaloff>:/img/images/TC_3.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>UDP</string>
+       </property>
+       <property name="icon">
+        <iconset resource="img.qrc">
+         <normaloff>:/img/images/US_3.png</normaloff>:/img/images/US_3.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>帮助</string>
+       </property>
+       <property name="icon">
+        <iconset resource="img.qrc">
+         <normaloff>:/img/images/help_3.png</normaloff>:/img/images/help_3.png</iconset>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QStackedWidget" name="stackedWidget">
+      <widget class="QWidget" name="page"/>
+      <widget class="QWidget" name="page_2"/>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>23</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="img.qrc"/>
+ </resources>
  <connections/>
 </ui>

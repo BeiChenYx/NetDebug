@@ -19,17 +19,17 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
     def __init__(self, parent):
         super(TcpServer, self).__init__(parent)
         self.setupUi(self)
-        self.initUi()
-        self._config_path = './NetDebug.ini'
-        self.initConnect()
-        self.cmd_status_func_dict = {
-            0: self.info_status,
-            1: self.client_connect,
-            2: self.client_close,
-            3: self.server_start,
-            4: self.server_close,
-        }
-        self._clients = list()
+        # self.initUi()
+        # self._config_path = './NetDebug.ini'
+        # self.initConnect()
+        # self.cmd_status_func_dict = {
+            # 0: self.info_status,
+            # 1: self.client_connect,
+            # 2: self.client_close,
+            # 3: self.server_start,
+            # 4: self.server_close,
+        # }
+        # self._clients = list()
     
     def initUi(self):
         self.tabWidget.clear()

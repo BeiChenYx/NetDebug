@@ -18,15 +18,15 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
     def __init__(self, parent):
         super(UdpServer, self).__init__(parent)
         self.setupUi(self)
-        self._config_path = './NetDebug.ini'
-        self.initUi() 
-        self.init_connect()
-        self._clients = list()
-        self.cmd_status_func_dict = {
-            0: self.info_status,
-            1: self.server_start,
-            2: self.server_close,
-        }
+        # self._config_path = './NetDebug.ini'
+        # self.initUi() 
+        # self.init_connect()
+        # self._clients = list()
+        # self.cmd_status_func_dict = {
+            # 0: self.info_status,
+            # 1: self.server_start,
+            # 2: self.server_close,
+        # }
 
     def initUi(self):
         self.tabWidget.clear()

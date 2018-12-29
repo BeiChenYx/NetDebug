@@ -6,26 +6,6 @@ from PyQt5 import QtCore
 import asyncio
 
 
-class StopTcpServerException(Exception):
-    pass
-
-class TcpServerProtocol(asyncio.Protocol):
-    def connection_made(self, transport):
-        self.peername = transport.get_extra_info('peername')
-        self.transport = transport
-        print('connect: ', self.peername)
-
-    def data_received(self, data):
-        message = data.decode()
-        print('Data received: {!r}: {}'.format(message, self.peername))
-
-        print('Send: {!r} : {}'.format(message, self.peername))
-        self.transport.write(data)
-
-    def connection_lost(self, exc):
-        print('connection_lost: ', self.peername)
-        self.transport.close()
-
 class TCPServerWorkThread(QtCore.QThread):
     """
     处理TCPServer的服务器线程
@@ -48,21 +28,9 @@ class TCPServerWorkThread(QtCore.QThread):
         pass
 
     def run(self):
-        coro = self._loop.create_server(
-            TcpServerProtocol, self._ip, self._port
-        )
-        self._server = self._loop.run_until_complete(coro)
-        print('Serving on {}'.format(self._server.sockets[0].getsockname()))
         msg = "3-TCPServerStart"
         self.statusSignal.emit(msg)
-        try:
-            self._loop.run_forever()
-        except RuntimeError:
-            print('RuntimeError ********')
 
-        print('wait_closed...')
-        self._loop.close()
-        print('Exit Tcp server!')
         msg = "4-TCPServerClose"
         self.statusSignal.emit(msg)
 
