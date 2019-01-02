@@ -1,63 +1,20 @@
 <RCC>
   <qresource prefix="img">
+    <file>images/加.png</file>
+    <file>images/减号.png</file>
+    <file>images/帮助.png</file>
     <file>images/check_box.png</file>
     <file>images/check_box_disabled.png</file>
     <file>images/checked_box.png</file>
-    <file>images/help_1.png</file>
-    <file>images/help_2.png</file>
-    <file>images/help_3.png</file>
-    <file>images/help_4.png</file>
     <file>images/ico.png</file>
-    <file>images/main.png</file>
-    <file>images/set_1.png</file>
-    <file>images/set_2.png</file>
-    <file>images/set_3.png</file>
-    <file>images/set_4.png</file>
-    <file>images/TC_1.png</file>
-    <file>images/TC_2.png</file>
-    <file>images/TC_3.png</file>
-    <file>images/TC_4.png</file>
-    <file>images/TS_1.png</file>
-    <file>images/TS_2.png</file>
-    <file>images/TS_3.png</file>
-    <file>images/TS_4.png</file>
-    <file>images/UC_1.png</file>
-    <file>images/UC_2.png</file>
-    <file>images/UC_3.png</file>
-    <file>images/UC_4.png</file>
-    <file>images/US_1.png</file>
-    <file>images/US_2.png</file>
-    <file>images/US_3.png</file>
-    <file>images/US_4.png</file>
     <file>images/滚动条箭头down.png</file>
     <file>images/滚动条箭头downhover.png</file>
     <file>images/滚动条箭头up.png</file>
     <file>images/滚动条箭头uphover.png</file>
-    <file>images/help_1.png</file>
-    <file>images/help_2.png</file>
-    <file>images/help_3.png</file>
-    <file>images/help_4.png</file>
     <file>images/ico.png</file>
-    <file>images/main.png</file>
-    <file>images/set_1.png</file>
-    <file>images/set_2.png</file>
-    <file>images/set_3.png</file>
-    <file>images/set_4.png</file>
-    <file>images/TC_1.png</file>
-    <file>images/TC_2.png</file>
-    <file>images/TC_3.png</file>
-    <file>images/TC_4.png</file>
-    <file>images/TS_1.png</file>
-    <file>images/TS_2.png</file>
-    <file>images/TS_3.png</file>
-    <file>images/TS_4.png</file>
-    <file>images/UC_1.png</file>
-    <file>images/UC_2.png</file>
-    <file>images/UC_3.png</file>
-    <file>images/UC_4.png</file>
-    <file>images/US_1.png</file>
-    <file>images/US_2.png</file>
-    <file>images/US_3.png</file>
-    <file>images/US_4.png</file>
+    <file>images/checked_box.png</file>
+    <file>images/TCP服务器.png</file>
+    <file>images/TCP客户端.png</file>
+    <file>images/UDP工具.png</file>
   </qresource>
 </RCC>

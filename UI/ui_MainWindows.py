@@ -19,6 +19,42 @@ class Ui_MainWindow(object):
 "    background: #FFFFFF;\n"
 "}\n"
 "\n"
+"QPushButton\n"
+"{\n"
+"    padding: 1px 10px;\n"
+"    border-radius:2px;\n"
+"    border: 1px groove #AAAAAA;\n"
+"    color: #000000;\n"
+"}\n"
+" QPushButton:hover\n"
+"{\n"
+"    background-color:3DAAFD;\n"
+"    background: #3DAAFD;\n"
+"    color: #FFFFFF;\n"
+"}\n"
+"\n"
+"QPushButton:pressed\n"
+"{\n"
+"    background-color: #C2C2C2;\n"
+"    background: #C2C2C2;\n"
+"    color: #000000;\n"
+"}\n"
+"\n"
+"QLineEdit\n"
+"{\n"
+"    background-color: #FFFFFF;\n"
+"    border:1px groove #AAAAAA; \n"
+"    border-radius:2px;\n"
+"    padding: 1px 5px;                  \n"
+"}\n"
+" QLineEdit:focus \n"
+"{\n"
+"    background-color: #FFFFFF;\n"
+"    border-image:none;\n"
+"    border:1px groove #3DAAFD; \n"
+"    border-radius:2px;\n"
+"}\n"
+"\n"
 "QListWidget\n"
 "{\n"
 "    color: black; \n"
@@ -57,6 +93,34 @@ class Ui_MainWindow(object):
 "    color:  #3DAAFD;\n"
 "    border-left:2px solid #3DAAFD;\n"
 "}*/\n"
+"\n"
+"QTextEdit\n"
+"{\n"
+"    border: 0px;\n"
+"    padding: 16px 2px;\n"
+"    background-color: #FFFFFF;\n"
+"}\n"
+"\n"
+"QCheckBox{\n"
+"    spacing: 5px;\n"
+"}\n"
+" \n"
+"QCheckBox::indicator{\n"
+"    width: 25px;\n"
+"    height: 25px;\n"
+"}\n"
+" \n"
+"QCheckBox::indicator:unchecked{    \n"
+"    image: url(:/img/images/check_box.png);\n"
+"}\n"
+" \n"
+"QCheckBox::indicator:checked{\n"
+"    image: url(:/img/images/checked_box.png);\n"
+"}\n"
+" \n"
+"QCheckBox::indicator:checked:disabled{\n"
+"    image: url(:/img/images/check_box_disabled.png);\n"
+"}\n"
 "")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setLayoutDirection(QtCore.Qt.LeftToRight)
@@ -72,22 +136,22 @@ class Ui_MainWindow(object):
         self.listWidget.setObjectName("listWidget")
         item = QtWidgets.QListWidgetItem()
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/img/images/TS_3.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/img/images/TCP服务器.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         item.setIcon(icon)
         self.listWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/img/images/TC_3.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/img/images/TCP客户端.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         item.setIcon(icon1)
         self.listWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/img/images/US_3.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/img/images/UDP工具.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         item.setIcon(icon2)
         self.listWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/img/images/help_3.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/img/images/帮助.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         item.setIcon(icon3)
         self.listWidget.addItem(item)
         self.gridLayout.addWidget(self.listWidget, 0, 0, 1, 1)
@@ -118,9 +182,9 @@ class Ui_MainWindow(object):
         item = self.listWidget.item(1)
         item.setText(_translate("MainWindow", "TCP客户端"))
         item = self.listWidget.item(2)
-        item.setText(_translate("MainWindow", "UDP"))
+        item.setText(_translate("MainWindow", "UDP工具组"))
         item = self.listWidget.item(3)
-        item.setText(_translate("MainWindow", "帮助"))
+        item.setText(_translate("MainWindow", "关于/帮助"))
         self.listWidget.setSortingEnabled(__sortingEnabled)
 
 import img_rc

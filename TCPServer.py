@@ -19,28 +19,15 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
     def __init__(self, parent):
         super(TcpServer, self).__init__(parent)
         self.setupUi(self)
-        # self.initUi()
-        # self._config_path = './NetDebug.ini'
-        # self.initConnect()
-        # self.cmd_status_func_dict = {
-            # 0: self.info_status,
-            # 1: self.client_connect,
-            # 2: self.client_close,
-            # 3: self.server_start,
-            # 4: self.server_close,
-        # }
-        # self._clients = list()
-    
-    def initUi(self):
-        self.tabWidget.clear()
-
-        self.single_send = SingleSend(self)
-        # self.send_list = SendList(self)
-
-        # self.scrollArea = QtWidgets.QScrollArea(self)
-        # self.scrollArea.setWidget(self.send_list)
-        self.tabWidget.addTab(self.single_send, '数据发送')
-        # self.tabWidget.addTab(self.scrollArea, '多条发送')
+        self._config_path = './NetDebug.ini'
+        self.initConnect()
+        self.cmd_status_func_dict = {
+            0: self.info_status,
+            1: self.client_connect,
+            2: self.client_close,
+            3: self.server_start,
+            4: self.server_close,
+        }
 
     def initConfig(self):
         config = configparser.ConfigParser()
@@ -62,7 +49,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 self.lineEdit_Recv_File_Path.setText(
                     tcp_server['readtofilepath']
                 )
-                self.single_send.initConfig(tcp_server)
+                # self.single_send.initConfig(tcp_server)
         except Exception as err:
             self.status_signal.emit(str(err))
 
@@ -75,7 +62,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
             'pause': str(self.checkBox_Pause_Display.isChecked()),
             'readtofilepath': self.lineEdit_Recv_File_Path.text(),
         }
-        config.update(self.single_send.update_config())
+        # config.update(self.single_send.update_config())
         return config
 
     def initConnect(self):
@@ -84,12 +71,6 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         )
         self.pushButton_Clear_Recv.clicked.connect(
             self.on_pushButton_Clear_display
-        )
-        self.single_send.data_signal.connect(
-            self.sendData
-        )
-        self.single_send.status_signal.connect(
-            self.status_signal
         )
         self.pushButton_Clear_Count.clicked.connect(
             self.on_pushButton_clear_count
@@ -115,7 +96,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
             self.tcp_server.start()
         else:
             self.tcp_server.exitTCPServer()
-            self.tcp_server.quit()
+            self.tcp_server.terminate()
             self.tcp_server.wait(1000)
     
     def on_workData(self, addr, data):
@@ -187,13 +168,15 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         """
         # client_info = eval(msg)
         # info = client_info[0] + ':' + str(client_info[1])
-        self._clients.append(msg)
-        self.update_listWidget()
+        # self._clients.append(msg)
+        # self.update_listWidget()
+        self.textEdit.insertPlainText(msg)
 
     def client_close(self, msg):
         # client_info = eval(msg)
-        self._clients.remove(msg)
-        self.update_listWidget()
+        # self._clients.remove(msg)
+        # self.update_listWidget()
+        self.textEdit.insertPlainText(msg)
     
     def server_start(self, msg):
         self.status_signal.emit(msg)
@@ -213,14 +196,16 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         """
         更新listView，如果self._clients为空则全都删除
         """
-        self.listWidget.clear()
-        self.listWidget.addItems(self._clients)
-        self.listWidget.setCurrentRow(0)
+        # self.listWidget.clear()
+        # self.listWidget.addItems(self._clients)
+        # self.listWidget.setCurrentRow(0)
+        pass
     
     def get_listView_select_text(self):
-        if self.listWidget.count() == 0:
-            return ''
-        return self.listWidget.currentItem().text()
+        # if self.listWidget.count() == 0:
+            # return ''
+        # return self.listWidget.currentItem().text()
+        pass
     
     def sendData(self, msg):
         try:

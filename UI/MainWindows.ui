@@ -21,6 +21,42 @@
     background: #FFFFFF;
 }
 
+QPushButton
+{
+    padding: 1px 10px;
+	border-radius:2px;
+    border: 1px groove #AAAAAA;
+	color: #000000;
+}
+ QPushButton:hover
+{
+    background-color:3DAAFD;
+	background: #3DAAFD;
+	color: #FFFFFF;
+}
+
+QPushButton:pressed
+{
+    background-color: #C2C2C2;
+	background: #C2C2C2;
+	color: #000000;
+}
+
+QLineEdit
+{
+    background-color: #FFFFFF;
+    border:1px groove #AAAAAA; 
+    border-radius:2px;
+    padding: 1px 5px;                  
+}
+ QLineEdit:focus 
+{
+    background-color: #FFFFFF;
+    border-image:none;
+    border:1px groove #3DAAFD; 
+    border-radius:2px;
+}
+
 QListWidget
 {
     color: black; 
@@ -59,6 +95,34 @@ QListWidget::Item:selected:active
     color:  #3DAAFD;
     border-left:2px solid #3DAAFD;
 }*/
+
+QTextEdit
+{
+    border: 0px;
+    padding: 16px 2px;
+    background-color: #FFFFFF;
+}
+
+QCheckBox{
+    spacing: 5px;
+}
+ 
+QCheckBox::indicator{
+    width: 25px;
+    height: 25px;
+}
+ 
+QCheckBox::indicator:unchecked{	
+	image: url(:/img/images/check_box.png);
+}
+ 
+QCheckBox::indicator:checked{
+	image: url(:/img/images/checked_box.png);
+}
+ 
+QCheckBox::indicator:checked:disabled{
+	image: url(:/img/images/check_box_disabled.png);
+}
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -104,7 +168,7 @@ QListWidget::Item:selected:active
        </property>
        <property name="icon">
         <iconset resource="img.qrc">
-         <normaloff>:/img/images/TS_3.png</normaloff>:/img/images/TS_3.png</iconset>
+         <normaloff>:/img/images/TCP服务器.png</normaloff>:/img/images/TCP服务器.png</iconset>
        </property>
       </item>
       <item>
@@ -113,25 +177,25 @@ QListWidget::Item:selected:active
        </property>
        <property name="icon">
         <iconset resource="img.qrc">
-         <normaloff>:/img/images/TC_3.png</normaloff>:/img/images/TC_3.png</iconset>
+         <normaloff>:/img/images/TCP客户端.png</normaloff>:/img/images/TCP客户端.png</iconset>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>UDP</string>
+        <string>UDP工具组</string>
        </property>
        <property name="icon">
         <iconset resource="img.qrc">
-         <normaloff>:/img/images/US_3.png</normaloff>:/img/images/US_3.png</iconset>
+         <normaloff>:/img/images/UDP工具.png</normaloff>:/img/images/UDP工具.png</iconset>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>帮助</string>
+        <string>关于/帮助</string>
        </property>
        <property name="icon">
         <iconset resource="img.qrc">
-         <normaloff>:/img/images/help_3.png</normaloff>:/img/images/help_3.png</iconset>
+         <normaloff>:/img/images/帮助.png</normaloff>:/img/images/帮助.png</iconset>
        </property>
       </item>
      </widget>
