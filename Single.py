@@ -32,18 +32,16 @@ class SingleSend(QtWidgets.QWidget, Ui_Form):
 
     def initConfig(self, msg):
         try:
+            self.checkBox_Hex.setChecked(msg['singlehex'] == 'True')
             self.textEdit.insertPlainText(msg['singlesenddata'])
-            self.checkBox_Hex.setChecked(
-                msg['singlehex'] == 'True'
-            )
             self.lineEdit_Times.setText(msg['singletimes'])
         except Exception as err:
             self.status_signal.emit(str(err))
 
     def update_config(self):
         config = {
-            'singlesenddata': self.textEdit.toPlainText(),
             'singlehex': str(self.checkBox_Hex.isChecked()),
+            'singlesenddata': self.textEdit.toPlainText(),
             'singletimes': self.lineEdit_Times.text()
         }
         return config
@@ -88,7 +86,16 @@ class SingleSend(QtWidgets.QWidget, Ui_Form):
             self.timer.stop()
 
     def on_check_hex(self):
-        if self.checkBox_Hex.isChecked():
-            pass
-        else:
-            pass
+        try:
+            data = self.textEdit.toPlainText().strip()
+            if not data:
+                return
+            if self.checkBox_Hex.isChecked():
+                data_temp = ' '.join('%02X' % ord(c) for c in data)
+            else:
+                data_temp = ''.join(chr(int(h, 16)) for h in data.split(' '))
+            self.textEdit.clear()
+            self.textEdit.insertPlainText(data_temp)
+        except Exception as err:
+            self.status_signal.emit(str(err))
+

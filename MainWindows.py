@@ -23,9 +23,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.tcp_server = TcpServer(self)
-        self.tcp_clients = TcpClients(self)
-        self.udp_server = UdpServer(self)
-        self.help = Help(self)
+        # self.tcp_clients = TcpClients(self)
+        # self.udp_server = UdpServer(self)
+        # self.help = Help(self)
 
         self.init_ui()
         self.init_connect()
@@ -37,9 +37,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setWindowTitle("网络调试助手")
 
         self.stackedWidget.insertWidget(0, self.tcp_server)
-        self.stackedWidget.insertWidget(1, self.tcp_clients)
-        self.stackedWidget.insertWidget(2, self.udp_server)
-        self.stackedWidget.insertWidget(3, self.help)
+        # self.stackedWidget.insertWidget(1, self.tcp_clients)
+        # self.stackedWidget.insertWidget(2, self.udp_server)
+        # self.stackedWidget.insertWidget(3, self.help)
 
         self.stackedWidget.setCurrentIndex(0)
         self.listWidget.setCurrentRow(0)
@@ -48,27 +48,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.tcp_server.status_signal.connect(
             self.status_show
         )
-        self.tcp_clients.status_signal.connect(
-            self.status_show
-        )
-        self.udp_server.status_signal.connect(
-            self.status_show
-        )
-        self.listWidget.currentRowChanged.connect(
-            self.stackedWidget.setCurrentIndex
-        )
+        # self.tcp_clients.status_signal.connect(
+            # self.status_show
+        # )
+        # self.udp_server.status_signal.connect(
+            # self.status_show
+        # )
+        # self.listWidget.currentRowChanged.connect(
+            # self.stackedWidget.setCurrentIndex
+        # )
 
     def init_config(self):
         self._config_path = './NetDebug.ini'
         self.tcp_server.initConfig()
-        self.tcp_clients.initConfig()
-        self.udp_server.initConfig()
+        # self.tcp_clients.initConfig()
+        # self.udp_server.initConfig()
     
     def update_config(self):
         config = configparser.ConfigParser()
         config['TCPServer'] = self.tcp_server.update_config()
-        config['TCPClients'] = self.tcp_clients.update_config()
-        config['UDPServer'] = self.udp_server.update_config()
+        # config['TCPClients'] = self.tcp_clients.update_config()
+        # config['UDPServer'] = self.udp_server.update_config()
 
         with open(self._config_path, 'w', encoding='utf-8') as fi:
             config.write(fi)

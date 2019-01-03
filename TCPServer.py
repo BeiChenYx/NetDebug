@@ -9,7 +9,7 @@ from PyQt5 import QtGui
 from UI.ui_TCPServer import Ui_Form
 from Single import SingleSend
 from SendList import SendList
-from aio_tcp_server import TCPServerWorkThread
+from selector_handle import TCPServerWorkThread
 
 
 class TcpServer(QtWidgets.QWidget, Ui_Form):
@@ -19,6 +19,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
     def __init__(self, parent):
         super(TcpServer, self).__init__(parent)
         self.setupUi(self)
+        self.init_ui()
         self._config_path = './NetDebug.ini'
         self.initConnect()
         self.cmd_status_func_dict = {
@@ -28,6 +29,12 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
             3: self.server_start,
             4: self.server_close,
         }
+        self._clients = list()
+
+    def init_ui(self):
+        self.single = SingleSend(self)
+        self.tabWidget.addTab(self.single, '发送数据')
+        self.tabWidget.setCurrentIndex(0)
 
     def initConfig(self):
         config = configparser.ConfigParser()
@@ -49,7 +56,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 self.lineEdit_Recv_File_Path.setText(
                     tcp_server['readtofilepath']
                 )
-                # self.single_send.initConfig(tcp_server)
+                self.single.initConfig(tcp_server)
         except Exception as err:
             self.status_signal.emit(str(err))
 
@@ -62,41 +69,35 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
             'pause': str(self.checkBox_Pause_Display.isChecked()),
             'readtofilepath': self.lineEdit_Recv_File_Path.text(),
         }
-        # config.update(self.single_send.update_config())
+        config.update(self.single.update_config())
         return config
 
     def initConnect(self):
-        self.pushButton_Connect.clicked.connect(
-            self.on_pushButton_Connect
-        )
         self.pushButton_Clear_Recv.clicked.connect(
             self.on_pushButton_Clear_display
         )
         self.pushButton_Clear_Count.clicked.connect(
             self.on_pushButton_clear_count
         )
-        self.checkBox_Recv_To_File.stateChanged.connect(
-            self.on_to_file
-        )
-    
+        self.pushButton_Connect.clicked.connect(self.on_pushButton_Connect)
+        self.single.data_signal.connect(self.sendData)
+        self.single.status_signal.connect(self.status_signal)
+        self.checkBox_Recv_To_File.stateChanged.connect(self.on_to_file)
+        self.checkBox_Display_Hex.stateChanged.connect(self.on_check_hex)
+
     def on_pushButton_Connect(self):
         if self.pushButton_Connect.text() == '连接':
             if self.lineEdit_IP.text() == '' or self.lineEdit_Port.text() == '':
                 return
             self.tcp_server = TCPServerWorkThread(
-                self.lineEdit_IP.text(),
-                int(self.lineEdit_Port.text())
+                self.lineEdit_IP.text(), int(self.lineEdit_Port.text())
             )
-            self.tcp_server.dataSignal.connect(
-                self.on_workData
-            )
-            self.tcp_server.statusSignal.connect(
-                self.on_workStatus
-            )
+            self.tcp_server.dataSignal.connect(self.on_workData)
+            self.tcp_server.statusSignal.connect(self.on_workStatus)
             self.tcp_server.start()
         else:
             self.tcp_server.exitTCPServer()
-            self.tcp_server.terminate()
+            self.tcp_server.quit()
             self.tcp_server.wait(1000)
     
     def on_workData(self, addr, data):
@@ -109,35 +110,26 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         if len(self.textEdit.toPlainText()) > 4096:
             self.textEdit.clear()
 
-        self.label_RX.setText(
-            str(int(self.label_RX.text()) + len(data))
-        )
-        date_time = '' 
-        if self.checkBox_Display_Time.isChecked():
-            date_time = self.get_date_time()
-
+        date_time = self.get_date_time()
+        self.label_RX.setText(str(int(self.label_RX.text()) + len(data)))
         self.textEdit.moveCursor(QtGui.QTextCursor.End)
         if self.checkBox_Display_Hex.isChecked():
             data_list = list(map(lambda x: '%02X' % x, data))
-            self.textEdit.insertPlainText(
-                '[Receiving the data coming to' +
-                str(addr) + ']:\n' + ' '.join(data_list) + ' ' + date_time
-            )
-            if self.checkBox_Recv_To_File.isChecked():
-                self.save_file_name(
-                    '[Receiving the data coming to' +
-                    str(addr) + ']:\n' + ' '.join(data_list) + ' ' + date_time
-                )
+            if self.checkBox_Display_Time.isChecked():
+                data_display = date_time + ' '.join(data_list) + '\n'
+            else:
+                data_display = ' '.join(data_list) + ' '
+            self.textEdit.insertPlainText(data_display)
         else:
-            self.textEdit.insertPlainText(
-                '[Receiving the data coming to' +
-                str(addr) + ']:\n' + data.decode('gbk', 'ignore') + date_time
-            )
-            if self.checkBox_Recv_To_File.isChecked():
-                self.save_file_name(
-                    '[Receiving the data coming to' +
-                    str(addr) + ']:\n' + data.decode('gbk', 'ignore') + date_time
-                )
+            if self.checkBox_Display_Time.isChecked():
+                data_display = date_time + data.decode('gbk', 'ignore')
+                data_display += '\n'
+            else:
+                data_display = data.decode('gbk', 'ignore')
+            self.textEdit.insertPlainText(data_display)
+
+        if self.checkBox_Recv_To_File.isChecked():
+            self.save_file_name(data_display)
 
     def on_workStatus(self, msg):
         """
@@ -164,19 +156,14 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
     
     def client_connect(self, msg):
         """
-        msg:  "('127.0.0.1', 8000)"
+        msg:  "127.0.0.1:8000"
         """
-        # client_info = eval(msg)
-        # info = client_info[0] + ':' + str(client_info[1])
-        # self._clients.append(msg)
-        # self.update_listWidget()
-        self.textEdit.insertPlainText(msg)
+        self._clients.append(msg)
+        self.update_listWidget()
 
     def client_close(self, msg):
-        # client_info = eval(msg)
-        # self._clients.remove(msg)
-        # self.update_listWidget()
-        self.textEdit.insertPlainText(msg)
+        self._clients.remove(msg)
+        self.update_listWidget()
     
     def server_start(self, msg):
         self.status_signal.emit(msg)
@@ -185,7 +172,6 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
     def server_close(self, msg):
         self.status_signal.emit(msg)
         self.pushButton_Connect.setText('连接')
-        print('服务器关闭')
         self._clients.clear()
         self.update_listWidget()
 
@@ -196,16 +182,14 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         """
         更新listView，如果self._clients为空则全都删除
         """
-        # self.listWidget.clear()
-        # self.listWidget.addItems(self._clients)
-        # self.listWidget.setCurrentRow(0)
-        pass
+        self.listWidget.clear()
+        self.listWidget.addItems(self._clients)
+        self.listWidget.setCurrentRow(0)
     
     def get_listView_select_text(self):
-        # if self.listWidget.count() == 0:
-            # return ''
-        # return self.listWidget.currentItem().text()
-        pass
+        if self.listWidget.count() == 0:
+            return ''
+        return self.listWidget.currentItem().text()
     
     def sendData(self, msg):
         try:
@@ -213,7 +197,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 return
             addr = self.get_listView_select_text()
             if addr != '':
-                self.tcp_server.sendData(addr, msg)
+                self.tcp_server.send_data(addr, msg)
                 self.label_TX.setText(
                     str(int(self.label_TX.text()) + len(msg))
                 )
@@ -225,7 +209,6 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
         self.label_TX.setText('0')
 
     def on_to_file(self, state):
-        print('state: ', state)
         if self.checkBox_Recv_To_File.isChecked():
             file_name, _ = QtWidgets.QFileDialog.getSaveFileName(
                 self,
@@ -239,7 +222,7 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 self.lineEdit_Recv_File_Path.setText(file_name)
 
     def get_date_time(self):
-        return time.strftime(' [%Y-%m-%d %H:%M:%S]\n', time.localtime())
+        return time.strftime('[%Y-%m-%d %H:%M:%S]:\n', time.localtime())
 
     def save_file_name(self, data):
         try:
@@ -247,6 +230,20 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 self.lineEdit_Recv_File_Path.text(), 'a', encoding='gbk'
             ) as file:
                 file.write(data)
+        except Exception as err:
+            self.status_signal.emit(str(err))
+
+    def on_check_hex(self):
+        try:
+            data = self.textEdit.toPlainText().strip()
+            if not data:
+                return
+            if self.checkBox_Display_Hex.isChecked():
+                data_temp = ' '.join('%02X' % ord(c) for c in data)
+            else:
+                data_temp = ''.join(chr(int(h, 16)) for h in data.split(' '))
+            self.textEdit.clear()
+            self.textEdit.insertPlainText(data_temp)
         except Exception as err:
             self.status_signal.emit(str(err))
 
