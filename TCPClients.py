@@ -8,7 +8,7 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from UI.ui_TCPClients import Ui_Form
 from Single import SingleSend
-from SendList import SendList
+from MulPublish import MulPushButton
 
 from selector_clients_handle import TcpClientsWorkThread
 
@@ -19,29 +19,25 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
     def __init__(self, parent):
         super(TcpClients, self).__init__(parent)
         self.setupUi(self)
-        # self._config_path = './NetDebug.ini'
-        # self.initUi()
-        # self.initConnect()
+        self._config_path = './NetDebug.ini'
+        self.initUi()
+        self.initConnect()
 
-        # self.cmd_status_func_dict = {
-            # 0: self.clientConnect,
-            # 1: self.clientClose,
-            # 2: self.clientConnectErr,
-            # 3: self.info_status,
-            # 4: self.clientThreadStart,
-            # 5: self.clientThreadClose,
-        # }
-        # self._clients = list()
+        self.cmd_status_func_dict = {
+            0: self.clientConnect,
+            1: self.clientClose,
+            2: self.clientConnectErr,
+            3: self.info_status,
+            4: self.clientThreadStart,
+            5: self.clientThreadClose,
+        }
+        self._clients = list()
 
     def initUi(self):
-        self.tabWidget.clear()
-
         self.single_send = SingleSend(self)
-        self.send_list = SendList(self)
-        self.scrollArea = QtWidgets.QScrollArea(self)
-        self.scrollArea.setWidget(self.send_list)
-        self.tabWidget.addTab(self.single_send, '数据发送')
-        self.tabWidget.addTab(self.scrollArea, '多条发送')
+        self.mul_publish = MulPushButton(self)
+        self.tabWidget.insertTab(1, self.single_send, '单客户端')
+        self.tabWidget.insertTab(2, self.mul_publish, '多客户端')
 
     def initConnect(self):
         self.pushButton_Connect.clicked.connect(
@@ -53,18 +49,10 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         self.pushButton_Clear_Count.clicked.connect(
             self.on_pushButton_clear_count
         )
-        self.single_send.data_signal.connect(
-            self.sendData
-        )
-        self.single_send.status_signal.connect(
-            self.status_signal
-        )
-        self.send_list.data_signal.connect(
-            self.sendData
-        )
-        self.send_list.status_signal.connect(
-            self.status_signal
-        )
+        self.single_send.data_signal.connect(self.sendData)
+        self.single_send.status_signal.connect(self.status_signal)
+        self.mul_publish.status_signal.connect(self.status_signal)
+        self.mul_publish.data_signal.connect(self.sendData)
 
     def initConfig(self):
         config = configparser.ConfigParser()
@@ -87,7 +75,7 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
                     tcp_clients['count']
                 )
                 self.single_send.initConfig(tcp_clients)
-                self.send_list.initConfig(tcp_clients)
+                self.mul_publish.initConfig(tcp_clients)
         except Exception as err:
             self.status_signal.emit(str(err))
         
@@ -101,7 +89,7 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
             'count': self.lineEdit_Clients_Count.text(),
         }
         config.update(self.single_send.update_config())
-        config.update(self.send_list.update_config())
+        config.update(self.mul_publish.update_config())
         return config
 
     def on_pushButton_clear_display(self):
@@ -172,6 +160,7 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         try:
             cmd, message = msg.split('-')
             self.handle_workStatus(int(cmd), message)
+            print(msg)
         except Exception as err:
             self.status_signal.emit(str(err))
 
@@ -199,6 +188,7 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
     def clientThreadClose(self, msg):
         self.status_signal.emit(msg)
         self.pushButton_Connect.setText('连接')
+        self.update_listWidget()
 
     def update_listWidget(self):
         """

@@ -121,6 +121,10 @@ class Ui_MainWindow(object):
 "QCheckBox::indicator:checked:disabled{\n"
 "    image: url(:/img/images/check_box_disabled.png);\n"
 "}\n"
+"QScrollArea\n"
+"{\n"
+"    border: 0px solid gray;\n"
+"}\n"
 "")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setLayoutDirection(QtCore.Qt.LeftToRight)

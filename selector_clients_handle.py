@@ -26,9 +26,6 @@ class TcpClientsWorkThread(QtCore.QThread):
         self._queue = queue.Queue()
 
     def exitTcpClientsThread(self):
-        # [cc.close() for cc in self._clients]
-        # self._clients.clear()
-        # print('exitTcpClientsThread exit')
         self._exit = True
 
     def sendData(self, data):
@@ -47,7 +44,7 @@ class TcpClientsWorkThread(QtCore.QThread):
             5: clientThreadClose     客户端线程关闭
         """
         self._clients = list()
-        self.statusSignal.emit('4-clientThreadStart')
+        self.statusSignal.emit('4-client thread started')
 
         # 创建客户端，并连接服务器
         for _ in range(1, self._count + 1):
@@ -55,7 +52,7 @@ class TcpClientsWorkThread(QtCore.QThread):
                 cc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 cc.connect((self._ip, self._port))
                 self._clients.append(cc)
-                msg = "0-%s" % str(cc.getsockname())
+                msg = "0-{}:{}".format(*cc.getsockname())
                 self.statusSignal.emit(msg)
             except Exception as err:
                 msg = "2-Connect error:%s" % str(err)
@@ -81,7 +78,7 @@ class TcpClientsWorkThread(QtCore.QThread):
                         try:
                             client.send(data)
                         except Exception as err:
-                            msg = "1-%s" % str(client.getsockname())
+                            msg = "1-{}:{}".format(*cc.getsockname())
                             client.close()
                             self.statusSignal.emit(msg)
                             self._clients.remove(client)
@@ -93,22 +90,25 @@ class TcpClientsWorkThread(QtCore.QThread):
                         if data:
                             self.dataSignal.emit(data)
                         else:
-                            msg = "1-%s" % str(client.getsockname())
+                            msg = "1-{}:{}".format(*cc.getsockname())
                             client.close()
                             self.statusSignal.emit(msg)
                             self._clients.remove(client)
                             if len(self._clients) == 0:
                                 break
                     except Exception as err:
-                        msg = "1-%s" % str(client.getsockname())
-                        client.close()
-                        self.statusSignal.emit(msg)
-                        self._clients.remove(client)
+                        try:
+                            msg = "1-{}:{}".format(*cc.getsockname())
+                            client.close()
+                            self.statusSignal.emit(msg)
+                            self._clients.remove(client)
+                        except:
+                            pass
 
         count = len(self._clients)
         for i in range(count):
-            msg = "1-%s" % str(self._clients[i].getsockname())
+            msg = "1-{}:{}".format(*cc.getsockname())
             self._clients[i].close()
             self.statusSignal.emit(msg)
         self._clients.clear()
-        self.statusSignal.emit('5-clientThreadClose')
+        self.statusSignal.emit('5-client thread closed')

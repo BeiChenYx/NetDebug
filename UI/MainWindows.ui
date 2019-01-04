@@ -123,6 +123,10 @@ QCheckBox::indicator:checked{
 QCheckBox::indicator:checked:disabled{
 	image: url(:/img/images/check_box_disabled.png);
 }
+QScrollArea
+{
+    border: 0px solid gray;
+}
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">

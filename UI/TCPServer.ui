@@ -184,9 +184,12 @@
           <widget class="QLineEdit" name="lineEdit_IP">
            <property name="maximumSize">
             <size>
-             <width>100</width>
+             <width>200</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>本地地址</string>
            </property>
            <property name="text">
             <string/>
@@ -203,6 +206,9 @@
              <width>60</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="statusTip">
+            <string>端口</string>
            </property>
            <property name="placeholderText">
             <string>端口</string>
