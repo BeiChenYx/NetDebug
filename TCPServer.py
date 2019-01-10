@@ -14,7 +14,6 @@ from selector_handle import TCPServerWorkThread
 class TcpServer(QtWidgets.QWidget, Ui_Form):
 
     status_signal = QtCore.pyqtSignal(str)
-
     def __init__(self, parent):
         super(TcpServer, self).__init__(parent)
         self.setupUi(self)
@@ -118,15 +117,13 @@ class TcpServer(QtWidgets.QWidget, Ui_Form):
                 data_display = date_time + ' '.join(data_list) + '\n'
             else:
                 data_display = ' '.join(data_list) + ' '
-            self.textEdit.insertPlainText(data_display)
         else:
             if self.checkBox_Display_Time.isChecked():
-                data_display = date_time + data.decode('gbk', 'ignore')
-                data_display += '\n'
+                data_display = date_time + data.decode('gbk', 'ignore') + '\n'
             else:
                 data_display = data.decode('gbk', 'ignore')
-            self.textEdit.insertPlainText(data_display)
 
+        self.textEdit.insertPlainText(data_display)
         if self.checkBox_Recv_To_File.isChecked():
             self.save_file_name(data_display)
 

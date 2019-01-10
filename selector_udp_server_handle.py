@@ -3,7 +3,6 @@ from PyQt5 import QtCore
 
 import socket
 import select
-import queue
 
 
 class UDPServerWorkThread(QtCore.QThread):
@@ -16,13 +15,9 @@ class UDPServerWorkThread(QtCore.QThread):
         self._ip = ip
         self._port = port
         self._exit = False
-        self._queue = queue.Queue()
 
     def exitUdpWorkThread(self):
         self._exit = True
-
-    def sendData(self, addr, data):
-        self._queue.put((addr,data))
 
     def run(self):
         """
@@ -39,32 +34,23 @@ class UDPServerWorkThread(QtCore.QThread):
             sock.bind((self._ip, self._port))
             sock.setblocking(False)
 
-            msg = "1-UdpServerStart"
+            msg = "1-udp server started"
             self.statusSignal.emit(msg)
             while True:
                 if self._exit:
                     break
 
-                recvInput, sendOutput, _ = select.select(
-                    [sock, ], [sock, ], []
-                )
-                if len(recvInput) == 0 and self._queue.empty():
-                    QtCore.QThread.msleep(1)
-                if len(sendOutput) and len(self._clients):
-                    if not self._queue.empty():
-                        addr, data = self._queue.get()
-                        sock.sendto(data, eval(addr))
-                        
+                recvInput, *_ = select.select([sock, ], [sock, ], [])
                 if len(recvInput):
                     data, addr = sock.recvfrom(1000)
-                    print('addr: ', addr)
-                    print('data: ', data)
-                    self.dataSignal.emit(str(addr), data)
-                    self._clients.append(addr)
+                    self.dataSignal.emit('{}:{}'.format(*addr), data)
+                    self._clients.append('{}:{}'.format(*addr))
+                else:
+                    QtCore.QThread.msleep(1)
 
             self._clients.clear()
             sock.close()
-            msg = "2-UdpServerClose"
+            msg = "2-udp server closed"
             self.statusSignal.emit(msg)
         except Exception as err:
             self.statusSignal.emit('0-%s' % str(err))
