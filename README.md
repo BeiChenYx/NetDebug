@@ -6,7 +6,7 @@
 本项目使用pyqt5创建了一个网络调试助手,包含TCP/IP服务器，TCP/IP客户端，UDP/IP
 服务器， UDP/IP客户端
 
-![整体效果](.UI/images/main.png)
+![整体效果](./UI/images/main.png)
 
 #### 软件架构
 
