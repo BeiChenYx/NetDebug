@@ -14,7 +14,67 @@
    <string>UDP/IP_Server</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QTabWidget::pane
+{
+	top:20px;
+	border:none;
+ 
+}
+ 
+QTabBar::tab:first
+{
+	color:#333333;
+	background:transparent;
+	
+	font-family:&quot;????&quot;;
+	font-size:14px;
+	
+	padding-left:-9px;
+	padding-right:-9px;
+	width:105px;
+	height:30px;
+	margin-left:0px;
+	margin-right:40px;
+}
+ 
+QTabBar::tab:last
+{
+	color:#333333;
+	background:transparent;
+	
+	font-family:&quot;????&quot;;
+	font-size:14px;
+	
+	padding-left:-9px;
+	padding-right:-9px;
+	width:75px;
+	height:30px;
+	margin-left:0px;
+	margin-right:40px;
+}
+ 
+QTabBar::tab:selected, QTabBar::tab:hover
+{
+	color:#618BE5;
+	background:transparent;
+	
+	font-family:&quot;????&quot;;
+	font-size:14px;
+	
+	border-bottom:2px solid #618BE5;
+}
+ 
+QTabWidget::tab-bar { 
+    alignment: left;  
+	top:10px;
+	left:30px;
+} 
+ 
+ 
+#detailWgt, #appealReasonWgt
+{
+	border:none;
+}</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -48,7 +108,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
