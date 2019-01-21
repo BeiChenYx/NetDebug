@@ -96,6 +96,7 @@ venv.bak/
 
 # Rope project settings
 .ropeproject
+.vim
 
 # mkdocs documentation
 /site
