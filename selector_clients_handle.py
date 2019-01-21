@@ -105,10 +105,10 @@ class TcpClientsWorkThread(QtCore.QThread):
                         except:
                             pass
 
-        count = len(self._clients)
-        for i in range(count):
+        # count = len(self._clients)
+        for cc in self._clients:
             msg = "1-{}:{}".format(*cc.getsockname())
-            self._clients[i].close()
+            cc.close()
             self.statusSignal.emit(msg)
         self._clients.clear()
         self.statusSignal.emit('5-client thread closed')

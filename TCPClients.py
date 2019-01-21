@@ -53,6 +53,7 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         self.single_send.status_signal.connect(self.status_signal)
         self.mul_publish.status_signal.connect(self.status_signal)
         self.mul_publish.data_signal.connect(self.sendData)
+        self.checkBox_Display_Hex.stateChanged.connect(self.on_check_hex)
 
     def initConfig(self):
         config = configparser.ConfigParser()
@@ -160,7 +161,6 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
         try:
             cmd, message = msg.split('-')
             self.handle_workStatus(int(cmd), message)
-            print(msg)
         except Exception as err:
             self.status_signal.emit(str(err))
 
@@ -211,3 +211,17 @@ class TcpClients(QtWidgets.QWidget, Ui_Form):
 
     def get_date_time(self):
         return time.strftime(' [%Y-%m-%d %H:%M:%S]\n', time.localtime())
+
+    def on_check_hex(self):
+        try:
+            data = self.textEdit.toPlainText().strip()
+            if not data:
+                return
+            if self.checkBox_Display_Hex.isChecked():
+                data_temp = ' '.join('%02X' % ord(c) for c in data)
+            else:
+                data_temp = ''.join(chr(int(h, 16)) for h in data.split(' '))
+            self.textEdit.clear()
+            self.textEdit.insertPlainText(data_temp)
+        except Exception as err:
+            self.status_signal.emit(str(err))

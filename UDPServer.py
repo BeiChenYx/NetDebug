@@ -40,6 +40,7 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
         self.checkBox_hex_client.stateChanged.connect(self.on_check_hex)
         self.pushButton_create.clicked.connect(self.on_button_client_create)
         self.pushButton_send_client.clicked.connect(self.on_button_send_client)
+        self.checkBox_Display_Hex.stateChanged.connect(self.on_check_hex_display)
 
     def initConfig(self):
         config = configparser.ConfigParser()
@@ -211,8 +212,8 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
             self.udp_client.statusSignal.connect(self.on_workStatus)
             self.udp_client.start()
         else:
-            self.udp_client.status_signal.disconnect()
-            self.udp_client.exitUdpWorkThread()
+            # self.udp_client.statusSignal.disconnect()
+            self.udp_client.exitUdpClientsThread()
             self.udp_client.quit()
             self.udp_client.wait(1000)
 
@@ -245,6 +246,20 @@ class UdpServer(QtWidgets.QWidget, Ui_Form):
                 data_temp = ''.join(chr(int(h, 16)) for h in data.split(' '))
             self.textEdit_send_client.clear()
             self.textEdit_send_client.insertPlainText(data_temp)
+        except Exception as err:
+            self.status_signal.emit(str(err))
+
+    def on_check_hex_display(self):
+        try:
+            data = self.textEdit.toPlainText().strip()
+            if not data:
+                return
+            if self.checkBox_Display_Hex.isChecked():
+                data_temp = ' '.join('%02X' % ord(c) for c in data)
+            else:
+                data_temp = ''.join(chr(int(h, 16)) for h in data.split(' '))
+            self.textEdit.clear()
+            self.textEdit.insertPlainText(data_temp)
         except Exception as err:
             self.status_signal.emit(str(err))
 
