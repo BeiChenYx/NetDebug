@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>triangle_vertex.vert</file>
+        <file>triangle_fragment.frag</file>
+    </qresource>
+</RCC>
